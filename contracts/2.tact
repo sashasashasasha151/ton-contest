@@ -1,5 +1,4 @@
 import "@stdlib/deploy";
-
 /*
   TASK 2 - Proxy 
   Create a contract that forwards all received TONs
@@ -13,20 +12,30 @@ import "@stdlib/deploy";
 */
 
 message(0x44) Refund {
-  queryId: Int as uint64;
-  sender: Address;
+    queryId: Int as uint64;
+    sender: Address;
 }
 
 contract Task2 with Deployable {
-  admin: Address;
+    admin: Address;
+    init(admin: Address){
+        self.admin = admin;
+    }
 
-  init(admin: Address) {
-    self.admin = admin;
-  }
-  
-  receive(msg: Refund) {
-  }
+    receive(msg: Refund){
+        let to: Address = msg.sender;
+        let value: Int = context().value;
+        send(SendParameters{to: to, value: value, mode: SendIgnoreErrors, bounce: true});
+    }
 
-  receive(msg: Slice) {
-  }
+    receive(msg: Slice){
+        let to: Address = self.admin;
+        let from: Address = sender();
+        let value: Int = context().value;
+        let bodyBuilder: Builder = beginCell();
+        let withSlice: Builder = bodyBuilder.storeSlice(msg);
+        let withAddress: Builder = withSlice.storeAddress(from);
+        let body: Cell = withAddress.asCell();
+        send(SendParameters{to: to, value: value, mode: SendIgnoreErrors, bounce: true, body: body});
+    }
 }
