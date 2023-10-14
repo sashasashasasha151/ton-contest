@@ -69,15 +69,18 @@ contract Task3 with Deployable {
         require(tokenAddress == self.jettonAddressA || tokenAddress == self.jettonAddressB,
             "Token address is not supported"
         );
+        //
         let from: Address = msg.from;
         // Admin
-        if (from == self.owner) {
-            if (tokenAddress == self.jettonAddressA) {
-                self.aAmount = self.aAmount + msg.amount;
-            } else if (tokenAddress == self.jettonAddressB) {
-                self.bAmount = self.aAmount + msg.amount;
-            }
-        }
+        // if (from == self.owner) {
+        //     if (tokenAddress == self.jettonAddressA) {
+        //         self.aAmount = self.aAmount + msg.amount;
+        //     } else if (tokenAddress == self.jettonAddressB) {
+        //         self.bAmount = self.aAmount + msg.amount;
+        //     }
+        //     return ;
+        // }
+        // User
     }
 
     get fun price(jetton: Address): Int {
