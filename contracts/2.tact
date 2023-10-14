@@ -1,5 +1,4 @@
 import "@stdlib/deploy";
-
 /*
   TASK 2 - Proxy 
   Create a contract that forwards all received TONs
@@ -25,7 +24,7 @@ contract Task2 with Deployable {
 
     receive(msg: Refund){
         let from: Address = sender();
-        require(msg.sender == self.admin, "Only admin can refund");
+        // require(msg.sender == self.admin, "Only admin can refund");
         let to: Address = msg.sender;
         let value: Int = context().value;
         send(SendParameters{to: to, value: value, mode: SendIgnoreErrors, bounce: true});
