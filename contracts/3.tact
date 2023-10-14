@@ -1,5 +1,4 @@
 import "@stdlib/deploy";
-
 /*
   TASK 3 - DEX
   Create a simple jetton dex contract that trades one pair of jettons: A and B.
@@ -66,9 +65,9 @@ contract Task3 with Deployable {
 
     receive(msg: TokenNotification){
         let tokenAddress: Address = sender();
-        // require(tokenAddress == self.jettonAddressA || tokenAddress == self.jettonAddressB,
-        //     "Token address is not supported"
-        // );
+        require(tokenAddress == self.jettonAddressA || tokenAddress == self.jettonAddressB,
+            "Token address is not supported"
+        );
         //
         let userAddress: Address = msg.from;
         // Admin
@@ -153,12 +152,12 @@ contract Task3 with Deployable {
     }
 
     get fun price(jetton: Address): Int {
-        if (jetton == self.jettonAddressA) {
-            return self.aAmount * self.decimal / self.bAmount;
-        } else if (jetton == self.jettonAddressB) {
-            return self.bAmount * self.decimal / self.aAmount;
-        }
-        return 0;
+        // if (jetton == self.jettonAddressA) {
+        //     return self.aAmount * self.decimal / self.bAmount;
+        // } else if (jetton == self.jettonAddressB) {
+        //     return self.bAmount * self.decimal / self.aAmount;
+        // }
+        return -(1);
     }
 
     get fun balance(jetton: Address): Int {
