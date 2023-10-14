@@ -24,7 +24,7 @@ contract Task2 with Deployable {
 
     receive(msg: Refund){
         let from: Address = sender();
-        // require(msg.sender == self.admin, "Only admin can refund");
+        require(msg.sender == self.admin, "Only admin can refund");
         let to: Address = msg.sender;
         let value: Int = context().value;
         send(SendParameters{to: to, value: value, mode: SendIgnoreErrors, bounce: true});
@@ -34,10 +34,7 @@ contract Task2 with Deployable {
         let to: Address = self.admin;
         let from: Address = sender();
         let value: Int = context().value;
-        let bodyBuilder: Builder = beginCell();
-        let withSlice: Builder = bodyBuilder.storeRef(msg.asCell());
-        let withAddress: Builder = withSlice.storeAddress(from);
-        let body: Cell = withAddress.asCell();
+        let body: Cell = beginCell().storeRef(msg.asCell()).storeAddress(from).endCell();
         send(SendParameters{to: to, value: value, mode: SendIgnoreErrors, bounce: true, body: body});
     }
 }
