@@ -70,9 +70,9 @@ contract Task3 with Deployable {
             "Token address is not supported"
         );
         //
-        let from: Address = msg.from;
+        let userAddress: Address = msg.from;
         // Admin
-        if (from == self.owner) {
+        if (userAddress == self.owner) {
             if (tokenAddress == self.jettonAddressA) {
                 self.aAmount = self.aAmount + msg.amount;
             } else if (tokenAddress == self.jettonAddressB) {
@@ -80,38 +80,33 @@ contract Task3 with Deployable {
             }
             return ;
         }
-        // User
         // Contract balance from
-        let fromTokenContractAmount: Int = 0;
+        let fromContractAmount: Int = 0;
         if (tokenAddress == self.jettonAddressA) {
-            fromTokenContractAmount = self.aAmount;
+            fromContractAmount = self.aAmount;
         } else if (tokenAddress == self.jettonAddressB) {
-            fromTokenContractAmount = self.bAmount;
+            fromContractAmount = self.bAmount;
         }
         // Contract balance to
-        let toTokenContractAmount: Int = 0;
+        let toContractAmount: Int = 0;
         if (tokenAddress == self.jettonAddressA) {
-            toTokenContractAmount = self.bAmount;
+            toContractAmount = self.bAmount;
         } else if (tokenAddress == self.jettonAddressB) {
-            toTokenContractAmount = self.aAmount;
+            toContractAmount = self.aAmount;
         }
         // User amount
-        let fromTokenUserAmount: Int = msg.amount;
-        // Price for swap (TODO: check toTokenContractAmount, maybe need sub fromTokenUserAmount)
-        let price: Int = toTokenContractAmount * self.decimal / fromTokenContractAmount;
-        // Amount
-        // (amountOfJettonAOnContract * decimal / amountOfJettonBOnContract) * amountOfTokenBToSwap / decimal
-        let amount: Int = price * fromTokenUserAmount / self.decimal;
+        let fromUserAmount: Int = msg.amount;
+        let toUserAmount: Int = toContractAmount * self.decimal / fromContractAmount * fromUserAmount / self.decimal;
         // Check amount
-        if (amount > toTokenContractAmount) {
+        if (toUserAmount > toContractAmount) {
             send(SendParameters{to: tokenAddress,
                     value: 0,
                     mode: SendRemainingValue,
                     bounce: true,
                     body: TokenTransfer{queryId: msg.queryId,
-                        amount: msg.amount,
-                        destination: msg.from,
-                        responseDestination: msg.from,
+                        amount: fromUserAmount,
+                        destination: userAddress,
+                        responseDestination: userAddress,
                         // null?
                         customPayload: null,
                         // 0?
@@ -123,8 +118,7 @@ contract Task3 with Deployable {
             return ;
         }
         // Send
-        // ???
-        let toTokenAddress: Address = sender();
+        let toTokenAddress: Address = tokenAddress;
         if (tokenAddress == self.jettonAddressA) {
             toTokenAddress = self.jettonAddressB;
         } else if (tokenAddress == self.jettonAddressB) {
@@ -135,9 +129,9 @@ contract Task3 with Deployable {
                 mode: SendRemainingValue,
                 bounce: true,
                 body: TokenTransfer{queryId: msg.queryId,
-                    amount: amount,
-                    destination: msg.from,
-                    responseDestination: msg.from,
+                    amount: toUserAmount,
+                    destination: userAddress,
+                    responseDestination: userAddress,
                     // null?
                     customPayload: null,
                     // 0?
@@ -147,9 +141,9 @@ contract Task3 with Deployable {
             }
         );
         if (tokenAddress == self.jettonAddressA) {
-            self.bAmount = self.bAmount - amount;
+            self.bAmount = self.bAmount - toUserAmount;
         } else if (tokenAddress == self.jettonAddressB) {
-            self.aAmount = self.aAmount - amount;
+            self.aAmount = self.aAmount - toUserAmount;
         }
     }
 
