@@ -1,5 +1,4 @@
 import "@stdlib/deploy";
-
 /*
   TASK 3 - DEX
   Create a simple jetton dex contract that trades one pair of jettons: A and B.
@@ -72,15 +71,87 @@ contract Task3 with Deployable {
         //
         let from: Address = msg.from;
         // Admin
-        // if (from == self.owner) {
-        //     if (tokenAddress == self.jettonAddressA) {
-        //         self.aAmount = self.aAmount + msg.amount;
-        //     } else if (tokenAddress == self.jettonAddressB) {
-        //         self.bAmount = self.aAmount + msg.amount;
-        //     }
-        //     return ;
-        // }
+        if (from == self.owner) {
+            if (tokenAddress == self.jettonAddressA) {
+                self.aAmount = self.aAmount + msg.amount;
+            } else if (tokenAddress == self.jettonAddressB) {
+                self.bAmount = self.bAmount + msg.amount;
+            }
+            return ;
+        }
         // User
+        // Contract balance from
+        let fromTokenContractAmount: Int = 0;
+        if (tokenAddress == self.jettonAddressA) {
+            fromTokenContractAmount = self.aAmount;
+        } else if (tokenAddress == self.jettonAddressB) {
+            fromTokenContractAmount = self.bAmount;
+        }
+        // Contract balance to
+        let toTokenContractAmount: Int = 0;
+        if (tokenAddress == self.jettonAddressA) {
+            toTokenContractAmount = self.bAmount;
+        } else if (tokenAddress == self.jettonAddressB) {
+            toTokenContractAmount = self.aAmount;
+        }
+        // User amount
+        let fromTokenUserAmount: Int = msg.amount;
+        // Price for swap (TODO: check toTokenContractAmount, maybe need sub fromTokenUserAmount)
+        let price: Int = toTokenContractAmount * self.decimal / fromTokenUserAmount;
+        // Amount
+        let amount: Int = fromTokenUserAmount / price;
+        // Check amount
+        if (amount > toTokenContractAmount) {
+            send(SendParameters{to: tokenAddress,
+                    value: 0,
+                    mode: SendRemainingValue,
+                    bounce: true,
+                    body: TokenTransferInternal{queryId: msg.queryId,
+                        amount: msg.amount,
+                        destination: msg.from,
+                        responseDestination: msg.from,
+                        // null?
+                        customPayload: null,
+                        // 0?
+                        forwardTonAmount: 0,
+                        forwardPayload: msg.forwardPayload
+                    }.toCell(),
+                    code: init.code,
+                    data: init.data
+                }
+            );
+            return ;
+        }
+        // Send
+        let toTokenAddress: Address = 0;
+        if (tokenAddress == self.jettonAddressA) {
+            toTokenAddress = self.jettonAddressB;
+        } else if (tokenAddress == self.jettonAddressB) {
+            toTokenAddress = self.jettonAddressA;
+        }
+        send(SendParameters{to: toTokenAddress,
+                value: 0,
+                mode: SendRemainingValue,
+                bounce: true,
+                body: TokenTransferInternal{queryId: msg.queryId,
+                    amount: amount,
+                    destination: msg.from,
+                    responseDestination: msg.from,
+                    // null?
+                    customPayload: null,
+                    // 0?
+                    forwardTonAmount: 0,
+                    forwardPayload: msg.forwardPayload
+                }.toCell(),
+                code: init.code,
+                data: init.data
+            }
+        );
+        if (tokenAddress == self.jettonAddressA) {
+            self.bAmount = self.bAmount - amount;
+        } else if (tokenAddress == self.jettonAddressB) {
+            self.aAmount = self.aAmount - amount;
+        }
     }
 
     get fun price(jetton: Address): Int {
