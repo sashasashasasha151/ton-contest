@@ -82,10 +82,10 @@ contract Task3 with Deployable {
             let fromContractAmount: Int = 0;
             if (tokenAddress == self.jettonAddressA) {
                 // ????
-                fromContractAmount = self.aAmount;
+                fromContractAmount = self.aAmount - msg.amount;
             } else if (tokenAddress == self.jettonAddressB) {
                 // ????
-                fromContractAmount = self.bAmount;
+                fromContractAmount = self.bAmount - msg.amount;
             }
             // Contract balance to
             let toContractAmount: Int = 0;
@@ -97,7 +97,7 @@ contract Task3 with Deployable {
             // User amount
             let fromUserAmount: Int = msg.amount;
             let toUserAmount: Int =
-                toContractAmount * self.decimal / fromContractAmount * fromUserAmount / self.decimal;
+                (toContractAmount * self.decimal / fromContractAmount) * fromUserAmount / self.decimal;
             // Check amount
             if (toUserAmount > toContractAmount) {
                 send(SendParameters{to: tokenAddress,
