@@ -106,7 +106,7 @@ contract Task3 with Deployable {
                     value: 0,
                     mode: SendRemainingValue,
                     bounce: true,
-                    body: TokenTransferInternal{queryId: msg.queryId,
+                    body: TokenTransfer{queryId: msg.queryId,
                         amount: msg.amount,
                         destination: msg.from,
                         responseDestination: msg.from,
@@ -115,15 +115,14 @@ contract Task3 with Deployable {
                         // 0?
                         forwardTonAmount: 0,
                         forwardPayload: msg.forwardPayload
-                    }.toCell(),
-                    code: init.code,
-                    data: init.data
+                    }.toCell()
                 }
             );
             return ;
         }
         // Send
-        let toTokenAddress: Address = 0;
+        // ???
+        let toTokenAddress: Address = sender();
         if (tokenAddress == self.jettonAddressA) {
             toTokenAddress = self.jettonAddressB;
         } else if (tokenAddress == self.jettonAddressB) {
@@ -133,7 +132,7 @@ contract Task3 with Deployable {
                 value: 0,
                 mode: SendRemainingValue,
                 bounce: true,
-                body: TokenTransferInternal{queryId: msg.queryId,
+                body: TokenTransfer{queryId: msg.queryId,
                     amount: amount,
                     destination: msg.from,
                     responseDestination: msg.from,
@@ -142,9 +141,7 @@ contract Task3 with Deployable {
                     // 0?
                     forwardTonAmount: 0,
                     forwardPayload: msg.forwardPayload
-                }.toCell(),
-                code: init.code,
-                data: init.data
+                }.toCell()
             }
         );
         if (tokenAddress == self.jettonAddressA) {
