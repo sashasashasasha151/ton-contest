@@ -1,4 +1,5 @@
 import "@stdlib/deploy";
+
 /*
   TASK 3 - DEX
   Create a simple jetton dex contract that trades one pair of jettons: A and B.
@@ -97,9 +98,10 @@ contract Task3 with Deployable {
         // User amount
         let fromTokenUserAmount: Int = msg.amount;
         // Price for swap (TODO: check toTokenContractAmount, maybe need sub fromTokenUserAmount)
-        let price: Int = toTokenContractAmount * self.decimal / fromTokenUserAmount;
+        let price: Int = toTokenContractAmount * self.decimal / fromTokenContractAmount;
         // Amount
-        let amount: Int = fromTokenUserAmount / price;
+        // (amountOfJettonAOnContract * decimal / amountOfJettonBOnContract) * amountOfTokenBToSwap / decimal
+        let amount: Int = price * fromTokenUserAmount / self.decimal;
         // Check amount
         if (amount > toTokenContractAmount) {
             send(SendParameters{to: tokenAddress,
