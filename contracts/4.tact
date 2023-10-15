@@ -64,6 +64,7 @@ contract Task4 with Deployable {
 
   receive(msg: OwnershipAssigned) {
     if (self.lock != null) {
+      let amount: Int = context().value;
       send(SendParameters{to: sender(),
               value: 0,
               mode: SendRemainingValue,
@@ -74,8 +75,8 @@ contract Task4 with Deployable {
                   // null?
                   customPayload: null,
                   // 0?
-                  forwardAmount: 0,
-                  forwardPayload: msg.forwardPayload
+                  forwardAmount: amount,
+                  forwardPayload: emptyCell().asSlice()
               }.toCell()
           }
       );
