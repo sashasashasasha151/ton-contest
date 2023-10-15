@@ -30,6 +30,7 @@ struct Lock {
   tillTime: Int as uint32;
   nftAddress: Address;
   ownerAddress: Address;
+  forwardPayload: Slice as remaining;
 }
 
 message(0x05138d91) OwnershipAssigned {
@@ -83,7 +84,8 @@ contract Task4 with Deployable {
       self.lock = Lock{
           tillTime: now() + time,
           nftAddress: sender(),
-          ownerAddress: msg.prevOwner
+          ownerAddress: msg.prevOwner,
+          forwardPayload: msg.forwardPayload
       };
     }
   }
@@ -112,7 +114,7 @@ contract Task4 with Deployable {
                   customPayload: null,
                   // 0?
                   forwardAmount: 0,
-                  forwardPayload: emptyCell().asSlice()
+                  forwardPayload: (self.lock!!).forwardPayload
               }.toCell()
           }
       );
