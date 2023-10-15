@@ -114,7 +114,7 @@ contract Task4 with Deployable {
                   // null?
                   customPayload: null,
                   // 0?
-                  forwardAmount: context().value + myBalance(),
+                  forwardAmount: myBalance(),
                   forwardPayload: emptyCell().asSlice()
               }.toCell()
           }
