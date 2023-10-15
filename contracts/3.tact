@@ -37,6 +37,7 @@ message(0x7362d09c) TokenNotification {
     from: Address;
     forwardPayload: Slice as remaining;
 }
+
 message(0xf8a7ea5) TokenTransfer {
     queryId: Int as uint64;
     amount: Int as coins;
@@ -107,7 +108,7 @@ contract Task3 with Deployable {
                         body: TokenTransfer{queryId: msg.queryId,
                             amount: fromUserAmount,
                             destination: userAddress,
-                            responseDestination: userAddress,
+                            responseDestination: myAddress(),
                             // null?
                             customPayload: null,
                             // 0?
@@ -131,7 +132,7 @@ contract Task3 with Deployable {
                         body: TokenTransfer{queryId: msg.queryId,
                             amount: toUserAmount,
                             destination: userAddress,
-                            responseDestination: userAddress,
+                            responseDestination: myAddress(),
                             // null?
                             customPayload: null,
                             // 0?
