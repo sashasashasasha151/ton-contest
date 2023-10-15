@@ -66,9 +66,9 @@ contract Task3 with Deployable {
 
     receive(msg: TokenNotification){
         let tokenAddress: Address = sender();
-        require(tokenAddress == self.jettonAddressA || tokenAddress == self.jettonAddressB,
-            "Token address is not supported"
-        );
+        // require(tokenAddress == self.jettonAddressA || tokenAddress == self.jettonAddressB,
+        //     "Token address is not supported"
+        // );
         //
         let userAddress: Address = msg.from;
         // Admin
@@ -157,17 +157,17 @@ contract Task3 with Deployable {
     }
 
     get fun price(jetton: Address): Int {
-        if (jetton != self.jettonAddressA || jetton != self.jettonAddressB) {
-            let x: Int = 1;
-            while(x < 100) {
-                x = x + 1;
-            }
-        }
+        // if (jetton != self.jettonAddressA || jetton != self.jettonAddressB) {
+        //     let x: Int = 1;
+        //     while(x < 100) {
+        //         x = x + 1;
+        //     }
+        // }
         if (jetton == self.jettonAddressA) {
             // require(self.aAmount > 0, "Divide by zero");
-            if (self.aAmount == 0) {
-                return 0;
-            }
+            // if (self.aAmount == 0) {
+            //     return 0;
+            // }
             // let remaining: Int = self.bAmount * self.decimal % self.aAmount;
             let result: Int = self.bAmount * self.decimal / self.aAmount;
             // if (remaining != 0) {
@@ -175,9 +175,9 @@ contract Task3 with Deployable {
             // }
             return result;
         } else if (jetton == self.jettonAddressB) {
-            if (self.bAmount == 0) {
-                return 0;
-            }
+            // if (self.bAmount == 0) {
+            //     return 0;
+            // }
             // require(self.bAmount > 0, "Divide by zero");
             // let remaining: Int = self.aAmount * self.decimal % self.bAmount;
             let result: Int = self.aAmount * self.decimal / self.bAmount;
