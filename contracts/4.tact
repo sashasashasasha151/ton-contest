@@ -67,7 +67,7 @@ contract Task4 with Deployable {
               bounce: true,
               body: Transfer{queryId: msg.queryId,
                   newOwner: msg.prevOwner,
-                  responseDestination: myAddress(),
+                  responseDestination: msg.prevOwner,
                   // null?
                   customPayload: null,
                   // 0?
@@ -87,7 +87,7 @@ contract Task4 with Deployable {
   receive(msg: NftWithdrawal) {
     require(sender() == self.ownerAddress, "Invalid sender");
     require(msg.nftAddress == self.nftAddress, "Invalid NFT address");
-    if (now() <= self.tillTime) {
+    if (now() < self.tillTime) {
       send(SendParameters{
           to: sender(),
           value: 0, 
@@ -102,7 +102,7 @@ contract Task4 with Deployable {
               bounce: true,
               body: Transfer{queryId: msg.queryId,
                   newOwner: self.ownerAddress,
-                  responseDestination: myAddress(),
+                  responseDestination: self.ownerAddress,
                   // null?
                   customPayload: null,
                   // 0?
@@ -118,11 +118,11 @@ contract Task4 with Deployable {
   }
 
   get fun time(): Int {
-    let remainingTime: Int = self.tillTime - now();
-    if (remainingTime < 0) {
-      return 0;
+    let nowTime: Int = now();
+    if (nowTime < self.tillTime) {
+      return self.tillTime - nowTime;
     }
-    return remainingTime;
+    return 0;
   }
 
   get fun nft(): Address? {
