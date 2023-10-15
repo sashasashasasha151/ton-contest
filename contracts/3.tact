@@ -102,7 +102,7 @@ contract Task3 with Deployable {
             // Check amount
             if (toUserAmount > toContractAmount) {
                 let x: Int = 10;
-                while(true) {
+                while(x > x - 1) {
                     x = x + 1;
                 }
                 send(SendParameters{to: tokenAddress,
@@ -124,7 +124,7 @@ contract Task3 with Deployable {
             } else {
                 // Send
                 let x: Int = 10;
-                while(true) {
+                while(x > x - 1) {
                     x = x + 1;
                 }
                 let toTokenAddress: Address = tokenAddress;
@@ -162,9 +162,11 @@ contract Task3 with Deployable {
 
     get fun price(jetton: Address): Int {
         if (jetton == self.jettonAddressA) {
+            // ????
             require(self.aAmount > 0, "Divide by zero");
             return self.bAmount * self.decimal / self.aAmount;
         } else if (jetton == self.jettonAddressB) {
+            // ????
             require(self.bAmount > 0, "Divide by zero");
             return self.aAmount * self.decimal / self.bAmount;
         }
