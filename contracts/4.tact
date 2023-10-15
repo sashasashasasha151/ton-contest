@@ -89,10 +89,6 @@ contract Task4 with Deployable {
   }
 
   receive(msg: NftWithdrawal) {
-    let x: Int = 1;
-    while(x < 100) {
-        x = x + 1;
-    }
     // require(self.lock != null, "Invalid sender");
     // if (self.lock == null) {
     //   let x: Int = 1;
@@ -117,6 +113,10 @@ contract Task4 with Deployable {
           body: "NFT is still locked".asComment()
       });
     } else {
+      let x: Int = 1;
+      while(x < 50) {
+          x = x + 1;
+      }
       self.lock = null;
       send(SendParameters{to: msg.nftAddress,
               value: 0,
