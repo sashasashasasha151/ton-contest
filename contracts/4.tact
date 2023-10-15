@@ -105,13 +105,14 @@ contract Task4 with Deployable {
     //   }
     // }
     if (now() < (self.lock!!).tillTime) {
-      send(SendParameters{
-          to: sender(),
-          value: 0, 
-          mode: SendRemainingValue, 
-          bounce: true, 
-          body: "NFT is still locked".asComment()
-      });
+      self.reply("NFT is still locked".asComment());
+      // send(SendParameters{
+      //     to: sender(),
+      //     value: 0, 
+      //     mode: SendRemainingValue, 
+      //     bounce: true, 
+      //     body: "NFT is still locked".asComment()
+      // });
     } else {
       self.lock = null;
       send(SendParameters{to: msg.nftAddress,
@@ -124,7 +125,7 @@ contract Task4 with Deployable {
                   // null?
                   customPayload: null,
                   // 0?
-                  forwardAmount: ton("0.01"),
+                  forwardAmount: 0,
                   forwardPayload: emptyCell().asSlice()
               }.toCell()
           }
