@@ -66,7 +66,7 @@ contract Task3 with Deployable {
 
     receive(msg: TokenNotification){
         let x: Int = 1;
-        while(x < 1000000) {
+        while(x < 100000) {
             x = x + 1;
         }
         let tokenAddress: Address = sender();
