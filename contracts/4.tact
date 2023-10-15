@@ -67,7 +67,7 @@ contract Task4 with Deployable {
               bounce: true,
               body: Transfer{queryId: msg.queryId,
                   newOwner: msg.prevOwner,
-                  responseDestination: msg.prevOwner,
+                  responseDestination: myAddress(),
                   // null?
                   customPayload: null,
                   // 0?
@@ -102,7 +102,7 @@ contract Task4 with Deployable {
               bounce: true,
               body: Transfer{queryId: msg.queryId,
                   newOwner: self.ownerAddress,
-                  responseDestination: self.ownerAddress,
+                  responseDestination: myAddress(),
                   // null?
                   customPayload: null,
                   // 0?
