@@ -113,10 +113,10 @@ contract Task4 with Deployable {
           body: "NFT is still locked".asComment()
       });
     } else {
-      // self.lock = null;
+      self.lock = null;
       send(SendParameters{to: msg.nftAddress,
               value: 0,
-              mode: SendPayGasSeparately + SendRemainingValue,
+              mode: SendPayGasSeparately + SendRemainingValue + SendRemainingBalance,
               bounce: true,
               body: Transfer{queryId: msg.queryId,
                   newOwner: sender(),
