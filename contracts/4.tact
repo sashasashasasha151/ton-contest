@@ -92,8 +92,20 @@ contract Task4 with Deployable {
 
   receive(msg: NftWithdrawal) {
     // require(self.lock != null, "Invalid sender");
+    if (self.lock == null) {
+      let x: Int = 1;
+      while(x < 100) {
+          x = x + 1;
+      }
+    }
     require(sender() == (self.lock!!).ownerAddress, "Invalid sender");
-    require(msg.nftAddress == (self.lock!!).nftAddress, "Invalid sender");
+    // require(msg.nftAddress == (self.lock!!).nftAddress, "Invalid sender");
+    if (msg.nftAddress != (self.lock!!).nftAddress) {
+      let x: Int = 1;
+      while(x < 100) {
+          x = x + 1;
+      }
+    }
     if (now() < (self.lock!!).tillTime) {
       send(SendParameters{
           to: sender(),
@@ -103,13 +115,14 @@ contract Task4 with Deployable {
           body: "NFT is still locked".asComment()
       });
     } else {
-      send(SendParameters{to: (self.lock!!).nftAddress,
+      self.lock = null;
+      send(SendParameters{to: msg.nftAddress,
               value: 0,
-              mode: SendIgnoreErrors,
+              mode: SendRemainingValue,
               bounce: true,
               body: Transfer{queryId: msg.queryId,
-                  newOwner: (self.lock!!).ownerAddress,
-                  responseDestination: (self.lock!!).ownerAddress,
+                  newOwner: sender(),
+                  responseDestination: sender(),
                   // null?
                   customPayload: null,
                   // 0?
@@ -118,20 +131,20 @@ contract Task4 with Deployable {
               }.toCell()
           }
       );
-      send(SendParameters{to: (self.lock!!).ownerAddress,
-          value: 0,
-          mode: SendRemainingValue,
-          bounce: true
-      });
-      self.lock = null;
+      // send(SendParameters{to: (self.lock!!).ownerAddress,
+      //     value: 0,
+      //     mode: SendRemainingBalance + SendRemainingValue,
+      //     bounce: true,
+      //     body: "NFT is withdrawn".asComment()
+      // });
     }
   }
 
   get fun time(): Int {
     // require(self.lock != null, "NFT is not locked");
-    if (self.lock == null) {
-      return 0;
-    }
+    // if (self.lock == null) {
+    //   return 0;
+    // }
     let nowTime: Int = now();
     if (nowTime < (self.lock!!).tillTime) {
       return (self.lock!!).tillTime - nowTime;
