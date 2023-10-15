@@ -90,20 +90,20 @@ contract Task4 with Deployable {
 
   receive(msg: NftWithdrawal) {
     // require(self.lock != null, "Invalid sender");
-    if (self.lock == null) {
-      let x: Int = 1;
-      while(x < 100) {
-          x = x + 1;
-      }
-    }
+    // if (self.lock == null) {
+    //   let x: Int = 1;
+    //   while(x < 100) {
+    //       x = x + 1;
+    //   }
+    // }
     require(sender() == (self.lock!!).ownerAddress, "Invalid sender");
     // require(msg.nftAddress == (self.lock!!).nftAddress, "Invalid sender");
-    if (msg.nftAddress != (self.lock!!).nftAddress) {
-      let x: Int = 1;
-      while(x < 100) {
-          x = x + 1;
-      }
-    }
+    // if (msg.nftAddress != (self.lock!!).nftAddress) {
+    //   let x: Int = 1;
+    //   while(x < 100) {
+    //       x = x + 1;
+    //   }
+    // }
     if (now() < (self.lock!!).tillTime) {
       send(SendParameters{
           to: sender(),
