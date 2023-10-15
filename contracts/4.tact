@@ -75,7 +75,7 @@ contract Task4 with Deployable {
                   customPayload: null,
                   // 0?
                   forwardAmount: 0,
-                  forwardPayload: msg.forwardPayload
+                  forwardPayload: emptyCell().asSlice()
               }.toCell()
           }
       );
@@ -114,7 +114,7 @@ contract Task4 with Deployable {
                   customPayload: null,
                   // 0?
                   forwardAmount: 0,
-                  forwardPayload: (self.lock!!).forwardPayload
+                  forwardPayload: emptyCell().asSlice()
               }.toCell()
           }
       );
