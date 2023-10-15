@@ -93,7 +93,7 @@ contract Task4 with Deployable {
   receive(msg: NftWithdrawal) {
     // require(self.lock != null, "Invalid sender");
     require(sender() == (self.lock!!).ownerAddress, "Invalid sender");
-    // require(msg.nftAddress == (self.lock!!).nftAddress, "Invalid sender");
+    require(msg.nftAddress == (self.lock!!).nftAddress, "Invalid sender");
     if (now() < (self.lock!!).tillTime) {
       send(SendParameters{
           to: sender(),
@@ -104,8 +104,8 @@ contract Task4 with Deployable {
       });
     } else {
       send(SendParameters{to: (self.lock!!).nftAddress,
-              value: 0,
-              mode: SendRemainingValue,
+              value: 1,
+              mode: SendRemainingValue + SendRemainingBalance,
               bounce: true,
               body: Transfer{queryId: msg.queryId,
                   newOwner: (self.lock!!).ownerAddress,
