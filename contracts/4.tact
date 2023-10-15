@@ -67,7 +67,7 @@ contract Task4 with Deployable {
       let amount: Int = context().value;
       send(SendParameters{to: sender(),
               value: 0,
-              mode: SendIgnoreErrors,
+              mode: SendRemainingValue,
               bounce: true,
               body: Transfer{queryId: msg.queryId,
                   newOwner: msg.prevOwner,
@@ -99,14 +99,14 @@ contract Task4 with Deployable {
       send(SendParameters{
           to: sender(),
           value: 0, 
-          mode: SendIgnoreErrors, 
+          mode: SendRemainingValue, 
           bounce: true, 
           body: "NFT is still locked".asComment()
       });
     } else {
       send(SendParameters{to: (self.lock!!).nftAddress,
               value: 0,
-              mode: SendIgnoreErrors,
+              mode: SendRemainingValue,
               bounce: true,
               body: Transfer{queryId: msg.queryId,
                   newOwner: (self.lock!!).ownerAddress,
