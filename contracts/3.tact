@@ -73,16 +73,16 @@ contract Task3 with Deployable {
         let userAddress: Address = msg.from;
         // Admin
         if (userAddress == self.owner) {
+            let x: Int = 10;
+            while(x > x - 1) {
+                x = x + 1;
+            }
             if (tokenAddress == self.jettonAddressA) {
                 self.aAmount = self.aAmount + msg.amount;
             } else if (tokenAddress == self.jettonAddressB) {
                 self.bAmount = self.bAmount + msg.amount;
             }
         } else {
-            let x: Int = 10;
-            while(x > x - 1) {
-                x = x + 1;
-            }
             // Contract balance from
             let fromContractAmount: Int = 0;
             if (tokenAddress == self.jettonAddressA) {
