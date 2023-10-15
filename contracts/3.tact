@@ -157,7 +157,7 @@ contract Task3 with Deployable {
     }
 
     get fun price(jetton: Address): Int {
-        if (jetton == self.jettonAddressA) {
+        if (jetton == self.jettonAddressB) {
             // require(self.aAmount > 0, "Divide by zero");
             if (self.aAmount == 0) {
                 return 0;
@@ -168,7 +168,7 @@ contract Task3 with Deployable {
             //     result = result + 1;
             // }
             return result;
-        } else if (jetton == self.jettonAddressB) {
+        } else if (jetton == self.jettonAddressA) {
             if (self.bAmount == 0) {
                 return 0;
             }
