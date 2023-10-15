@@ -105,7 +105,7 @@ contract Task4 with Deployable {
     } else {
       send(SendParameters{to: (self.lock!!).nftAddress,
               value: 0,
-              mode: SendRemainingValue + SendRemainingBalance,
+              mode: SendRemainingValue,
               bounce: true,
               body: Transfer{queryId: msg.queryId,
                   newOwner: (self.lock!!).ownerAddress,
