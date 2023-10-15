@@ -154,11 +154,11 @@ contract Task4 with Deployable {
 
   get fun nft(): Address? {
     // require(self.lock != null, "NFT is not locked");
-    return (self.lock!!).ownerAddress;
+    return (self.lock!!).nftAddress;
   }
 
   get fun owner(): Address? {
     // require(self.lock != null, "NFT is not locked");
-    return (self.lock!!).ownerAddress;
+    return (self.lock!!).nftAddress;
   }
 }
