@@ -73,8 +73,8 @@ contract Task4 with Deployable {
                   // null?
                   customPayload: null,
                   // 0?
-                  forwardAmount: 0,
-                  forwardPayload: emptyCell().asSlice()
+                  forwardAmount: ton("0.01"),
+                  forwardPayload: emptySlice()
               }.toCell()
           }
       );
@@ -115,7 +115,7 @@ contract Task4 with Deployable {
     } else {
       self.lock = null;
       send(SendParameters{to: msg.nftAddress,
-              value: ton("1"),
+              value: 0,
               mode: SendRemainingValue,
               bounce: true,
               body: Transfer{queryId: msg.queryId,
@@ -124,8 +124,8 @@ contract Task4 with Deployable {
                   // null?
                   customPayload: null,
                   // 0?
-                  forwardAmount: 0,
-                  forwardPayload: emptyCell().asSlice()
+                  forwardAmount: ton("0.01"),
+                  forwardPayload: emptySlice()
               }.toCell()
           }
       );
