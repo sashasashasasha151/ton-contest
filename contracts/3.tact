@@ -168,22 +168,22 @@ contract Task3 with Deployable {
             // if (self.aAmount == 0) {
             //     return 0;
             // }
-            // let remaining: Int = self.bAmount * self.decimal % self.aAmount;
+            let remaining: Int = self.bAmount * self.decimal % self.aAmount;
             let result: Int = self.bAmount * self.decimal / self.aAmount;
-            // if (remaining != 0) {
-            //     result = result + 1;
-            // }
+            if (remaining != 0) {
+                result = result + 1;
+            }
             return result;
         } else if (jetton == self.jettonAddressB) {
             // if (self.bAmount == 0) {
             //     return 0;
             // }
             // require(self.bAmount > 0, "Divide by zero");
-            // let remaining: Int = self.aAmount * self.decimal % self.bAmount;
+            let remaining: Int = self.aAmount * self.decimal % self.bAmount;
             let result: Int = self.aAmount * self.decimal / self.bAmount;
-            // if (remaining != 0) {
-            //     result = result + 1;
-            // }
+            if (remaining != 0) {
+                result = result + 1;
+            }
             return result;
         }
         return 0;
