@@ -147,7 +147,7 @@ contract Task4 with Deployable {
     // }
     let nowTime: Int = now();
     if (nowTime < (self.lock!!).tillTime) {
-      return (self.lock!!).tillTime - nowTime;
+      return (self.lock!!).tillTime - nowTime - 1;
     }
     return 0;
   }
