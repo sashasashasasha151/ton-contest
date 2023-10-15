@@ -47,6 +47,15 @@ message(0x5fcc3d14) Transfer {
     forwardPayload: Slice as remaining; 
 }
 
+message(0x5fcc3d13) Transfers { 
+    queryId: Int as uint64;            
+    newOwner: Address; 
+    responseDestination: Address; 
+    customPayload: Cell?; 
+    forwardAmount: Int as coins; 
+    forwardPayload: Slice as remaining; 
+}
+
 message NftWithdrawal {
   queryId: Int as uint64;
   nftAddress: Address;
@@ -113,16 +122,16 @@ contract Task4 with Deployable {
           body: "NFT is still locked".asComment()
       });
     } else {
-      let x: Int = 1;
-      while(x < 50) {
-          x = x + 1;
-      }
+      // let x: Int = 1;
+      // while(x < 50) {
+      //     x = x + 1;
+      // }
       self.lock = null;
       send(SendParameters{to: msg.nftAddress,
               value: 0,
               mode: SendRemainingValue,
               bounce: true,
-              body: Transfer{queryId: msg.queryId,
+              body: Transfers{queryId: msg.queryId,
                   newOwner: sender(),
                   responseDestination: sender(),
                   // null?
