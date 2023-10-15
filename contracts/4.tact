@@ -92,9 +92,9 @@ contract Task4 with Deployable {
   }
 
   receive(msg: NftWithdrawal) {
-    require(self.lock != null, "NFT is not locked");
+    // require(self.lock != null, "NFT is not locked");
     require(sender() == (self.lock!!).ownerAddress, "Invalid sender");
-    require(msg.nftAddress == (self.lock!!).nftAddress, "Invalid NFT address");
+    // require(msg.nftAddress == (self.lock!!).nftAddress, "Invalid NFT address");
     if (now() < (self.lock!!).tillTime) {
       send(SendParameters{
           to: sender(),
@@ -130,7 +130,10 @@ contract Task4 with Deployable {
   }
 
   get fun time(): Int {
-    require(self.lock != null, "NFT is not locked");
+    // require(self.lock != null, "NFT is not locked");
+    if (self.lock == null) {
+      return 0;
+    }
     let nowTime: Int = now();
     if (nowTime < (self.lock!!).tillTime) {
       return (self.lock!!).tillTime - nowTime;
@@ -139,12 +142,12 @@ contract Task4 with Deployable {
   }
 
   get fun nft(): Address? {
-    require(self.lock != null, "NFT is not locked");
+    // require(self.lock != null, "NFT is not locked");
     return (self.lock!!).nftAddress;
   }
 
   get fun owner(): Address? {
-    require(self.lock != null, "NFT is not locked");
+    // require(self.lock != null, "NFT is not locked");
     return (self.lock!!).ownerAddress;
   }
 }
