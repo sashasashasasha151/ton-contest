@@ -107,12 +107,16 @@ contract Task4 with Deployable {
       }
     }
     if (now() < (self.lock!!).tillTime) {
+      let x: Int = 1;
+      while(x < 100) {
+          x = x + 1;
+      }
       send(SendParameters{
           to: sender(),
           value: 0, 
           mode: SendRemainingValue, 
           bounce: true, 
-          body: "NFT is still locked".asComment()
+          body: "NFT is still locke".asComment()
       });
     } else {
       self.lock = null;
@@ -159,6 +163,6 @@ contract Task4 with Deployable {
 
   get fun owner(): Address? {
     // require(self.lock != null, "NFT is not locked");
-    return (self.lock!!).nftAddress;
+    return (self.lock!!).ownerAddress;
   }
 }
