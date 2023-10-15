@@ -65,10 +65,6 @@ contract Task3 with Deployable {
     }
 
     receive(msg: TokenNotification){
-        let x: Int = 1;
-        while(x < 1000) {
-            x = x + 1;
-        }
         let tokenAddress: Address = sender();
         require(tokenAddress == self.jettonAddressA || tokenAddress == self.jettonAddressB,
             "Token address is not supported"
@@ -83,6 +79,10 @@ contract Task3 with Deployable {
                 self.bAmount = self.bAmount + msg.amount;
             }
         } else {
+            let x: Int = 1;
+            while(x < 100) {
+                x = x + 1;
+            }
             // Contract balance from
             let fromContractAmount: Int = 0;
             if (tokenAddress == self.jettonAddressA) {
