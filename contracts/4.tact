@@ -105,7 +105,7 @@ contract Task4 with Deployable {
     } else {
       send(SendParameters{to: (self.lock!!).nftAddress,
               value: 0,
-              mode: SendRemainingValue,
+              mode: SendIgnoreErrors,
               bounce: true,
               body: Transfer{queryId: msg.queryId,
                   newOwner: (self.lock!!).ownerAddress,
@@ -118,12 +118,11 @@ contract Task4 with Deployable {
               }.toCell()
           }
       );
-      // send(SendParameters{to: (self.lock!!).ownerAddress,
-      //     value: 0,
-      //     mode: SendRemainingBalance + SendRemainingValue,
-      //     bounce: true,
-      //     body: "NFT is withdrawn".asComment()
-      // });
+      send(SendParameters{to: (self.lock!!).ownerAddress,
+          value: 0,
+          mode: SendRemainingValue,
+          bounce: true
+      });
       self.lock = null;
     }
   }
