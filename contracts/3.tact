@@ -101,6 +101,10 @@ contract Task3 with Deployable {
                 (toContractAmount * self.decimal / fromContractAmount) * fromUserAmount / self.decimal;
             // Check amount
             if (toUserAmount > toContractAmount) {
+                let x: Int = 10;
+                while(true) {
+                    x = x + 1;
+                }
                 send(SendParameters{to: tokenAddress,
                         value: 0,
                         mode: SendRemainingValue,
@@ -108,7 +112,7 @@ contract Task3 with Deployable {
                         body: TokenTransfer{queryId: msg.queryId,
                             amount: fromUserAmount,
                             destination: userAddress,
-                            responseDestination: myAddress(),
+                            responseDestination: userAddress,
                             // null?
                             customPayload: null,
                             // 0?
@@ -119,6 +123,10 @@ contract Task3 with Deployable {
                 );
             } else {
                 // Send
+                let x: Int = 10;
+                while(true) {
+                    x = x + 1;
+                }
                 let toTokenAddress: Address = tokenAddress;
                 if (tokenAddress == self.jettonAddressA) {
                     toTokenAddress = self.jettonAddressB;
@@ -132,7 +140,7 @@ contract Task3 with Deployable {
                         body: TokenTransfer{queryId: msg.queryId,
                             amount: toUserAmount,
                             destination: userAddress,
-                            responseDestination: myAddress(),
+                            responseDestination: userAddress,
                             // null?
                             customPayload: null,
                             // 0?
