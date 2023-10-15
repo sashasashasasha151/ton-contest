@@ -64,10 +64,9 @@ contract Task4 with Deployable {
 
   receive(msg: OwnershipAssigned) {
     if (self.lock != null) {
-      let amount: Int = context().value;
       send(SendParameters{to: sender(),
               value: 0,
-              mode: SendRemainingValue,
+              mode: SendIgnoreErrors,
               bounce: true,
               body: Transfer{queryId: msg.queryId,
                   newOwner: msg.prevOwner,
@@ -92,9 +91,9 @@ contract Task4 with Deployable {
   }
 
   receive(msg: NftWithdrawal) {
-    require(self.lock != null, "Invalid sender");
+    // require(self.lock != null, "Invalid sender");
     require(sender() == (self.lock!!).ownerAddress, "Invalid sender");
-    require(msg.nftAddress == (self.lock!!).nftAddress, "Invalid sender");
+    // require(msg.nftAddress == (self.lock!!).nftAddress, "Invalid sender");
     if (now() < (self.lock!!).tillTime) {
       send(SendParameters{
           to: sender(),
