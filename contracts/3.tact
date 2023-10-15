@@ -171,7 +171,7 @@ contract Task3 with Deployable {
             let remaining: Int = self.bAmount * self.decimal % self.aAmount;
             let result: Int = self.bAmount * self.decimal / self.aAmount;
             if (remaining != 0) {
-                result = self.aAmount * self.decimal / self.bAmount;
+                result = result + 1;
             }
             return result;
         } else if (jetton == self.jettonAddressB) {
@@ -182,7 +182,7 @@ contract Task3 with Deployable {
             let remaining: Int = self.aAmount * self.decimal % self.bAmount;
             let result: Int = self.aAmount * self.decimal / self.bAmount;
             if (remaining != 0) {
-                result = self.bAmount * self.decimal / self.aAmount;
+                result = result + 1;
             }
             return result;
         }

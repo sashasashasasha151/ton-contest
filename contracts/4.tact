@@ -48,23 +48,77 @@ message NftWithdrawal {
 
 contract Task4 with Deployable {
   seed: Int as uint128;
+  tillTime: Int as uint32;
+  nftAddress: Address;
+  ownerAddress: Address;
   
   init(seed: Int) {
     self.seed = seed; // needed to deploy multiple smart contracts copies from one admin address
+    self.tillTime = 0;
+    self.nftAddress = newAddress(0, 0);
+    self.ownerAddress = newAddress(0, 0);
   }
 
   receive(msg: OwnershipAssigned) {
+    if (self.nftAddress != newAddress(0, 0)) {
+      send(SendParameters{to: sender(),
+              value: 0,
+              mode: SendRemainingValue,
+              bounce: true,
+              body: Transfer{queryId: msg.queryId,
+                  newOwner: msg.prevOwner,
+                  responseDestination: msg.prevOwner,
+                  // null?
+                  customPayload: null,
+                  // 0?
+                  forwardAmount: 0,
+                  forwardPayload: msg.forwardPayload
+              }.toCell()
+          }
+      );
+    } else {
+      let time: Int = msg.forwardPayload.loadUint(32);
+      self.tillTime = now() + time;
+      self.nftAddress = sender();
+      self.ownerAddress = msg.prevOwner;
+    }
   }
 
   receive(msg: NftWithdrawal) {
+    require(sender() == self.ownerAddress, "Invalid sender");
+    if (now() < self.tillTime) {
+      self.reply("NFT is still locked".asComment());
+    } else {
+      send(SendParameters{to: self.nftAddress,
+              value: 0,
+              mode: SendRemainingValue + SendRemainingBalance,
+              bounce: true,
+              body: Transfer{queryId: msg.queryId,
+                  newOwner: self.ownerAddress,
+                  responseDestination: self.ownerAddress,
+                  // null?
+                  customPayload: null,
+                  // 0?
+                  forwardAmount: 0,
+                  forwardPayload: emptyCell().asSlice()
+              }.toCell()
+          }
+      );
+      self.nftAddress = newAddress(0, 0);
+      self.ownerAddress = newAddress(0, 0);
+      self.tillTime = 0;
+    }
   }
 
   get fun time(): Int {
+    return now() - self.tillTime;
   }
 
   get fun nft(): Address? {
+    return self.nftAddress;
   }
 
   get fun owner(): Address? {
+    return self.ownerAddress;
   }
 }
