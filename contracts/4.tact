@@ -147,14 +147,14 @@ contract Task4 with Deployable {
     // }
     let nowTime: Int = now();
     if (nowTime < (self.lock!!).tillTime) {
-      return (self.lock!!).tillTime - nowTime - 1;
+      return (self.lock!!).tillTime - nowTime;
     }
     return 0;
   }
 
   get fun nft(): Address? {
     // require(self.lock != null, "NFT is not locked");
-    return (self.lock!!).nftAddress;
+    return (self.lock!!).ownerAddress;
   }
 
   get fun owner(): Address? {
