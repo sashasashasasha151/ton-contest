@@ -65,16 +65,16 @@ contract Task4 with Deployable {
   receive(msg: OwnershipAssigned) {
     if (self.lock != null) {
       send(SendParameters{to: sender(),
-              value: 0,
-              mode: SendIgnoreErrors,
+              value: ton("0.05"),
+              mode: SendRemainingValue,
               bounce: true,
               body: Transfer{queryId: msg.queryId,
                   newOwner: msg.prevOwner,
-                  responseDestination: msg.prevOwner,
+                  responseDestination: myAddress(),
                   // null?
                   customPayload: null,
                   // 0?
-                  forwardAmount: 0,
+                  forwardAmount: ton("0.05"),
                   forwardPayload: emptyCell().asSlice()
               }.toCell()
           }
