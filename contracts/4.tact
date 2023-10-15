@@ -30,7 +30,6 @@ struct Lock {
   tillTime: Int as uint32;
   nftAddress: Address;
   ownerAddress: Address;
-  forwardPayload: Slice as remaining;
 }
 
 message(0x05138d91) OwnershipAssigned {
@@ -84,8 +83,7 @@ contract Task4 with Deployable {
       self.lock = Lock{
           tillTime: now() + time,
           nftAddress: sender(),
-          ownerAddress: msg.prevOwner,
-          forwardPayload: msg.forwardPayload
+          ownerAddress: msg.prevOwner
       };
     }
   }
@@ -107,16 +105,12 @@ contract Task4 with Deployable {
       }
     }
     if (now() < (self.lock!!).tillTime) {
-      let x: Int = 1;
-      while(x < 100) {
-          x = x + 1;
-      }
       send(SendParameters{
           to: sender(),
           value: 0, 
           mode: SendRemainingValue, 
           bounce: true, 
-          body: "NFT is still locke".asComment()
+          body: "NFT is still locked".asComment()
       });
     } else {
       self.lock = null;
