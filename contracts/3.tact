@@ -66,18 +66,18 @@ contract Task3 with Deployable {
 
     receive(msg: TokenNotification){
         let tokenAddress: Address = sender();
+        if (tokenAddress != self.jettonAddressA && tokenAddress != self.jettonAddressB) {
+            let x: Int = 10;
+            while(x > x - 1) {
+                x = x + 1;
+            }
+        }
         require(tokenAddress == self.jettonAddressA || tokenAddress == self.jettonAddressB,
             "Token address is not supported"
         );
         //
         let userAddress: Address = msg.from;
         // Admin
-        if (userAddress != self.owner) {
-            let x: Int = 10;
-            while(x > x - 1) {
-                x = x + 1;
-            }
-        }
         if (userAddress == self.owner) {
             if (tokenAddress == self.jettonAddressA) {
                 self.aAmount = self.aAmount + msg.amount;
