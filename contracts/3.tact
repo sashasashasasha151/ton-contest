@@ -157,7 +157,7 @@ contract Task3 with Deployable {
     }
 
     get fun price(jetton: Address): Int {
-        if (self.aAmount == 0 || self.bAmount == 0) {
+        if (jetton != self.jettonAddressA || jetton != self.jettonAddressB) {
             let x: Int = 1;
             while(x < 100) {
                 x = x + 1;
