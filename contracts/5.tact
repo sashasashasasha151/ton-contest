@@ -91,7 +91,7 @@ contract Task5 with Deployable {
                 value: 0,
                 mode: SendRemainingValue + SendIgnoreErrors,
                 bounce: true,
-                body: Transfer{queryId: 0,
+                body: Transfer{queryId: msg.queryId,
                     newOwner: msg.prevOwner,
                     responseDestination: msg.prevOwner,
                     customPayload: null,
@@ -111,7 +111,7 @@ contract Task5 with Deployable {
                 value: context().value - ton("2"),
                 mode: SendIgnoreErrors,
                 bounce: true,
-                body: Transfer{queryId: 0,
+                body: Transfer{queryId: msg.queryId,
                     newOwner: msg.prevOwner,
                     responseDestination: msg.prevOwner,
                     customPayload: null,
@@ -130,7 +130,7 @@ contract Task5 with Deployable {
             value: myBalance() - ton("0.1"),
             mode: SendIgnoreErrors,
             bounce: true,
-            body: AdminFetchProfit{queryId: 0}.toCell()
+            body: AdminFetchProfit{queryId: msg.queryId}.toCell()
         }
     );
   }
@@ -146,10 +146,10 @@ contract Task5 with Deployable {
 
       if (i == self.nftMapLength - 1) {
         send(SendParameters{to: nft,
-                value: tonAttached,
-                mode: SendIgnoreErrors,
+                value: 0,
+                mode: SendPayGasSeparately,
                 bounce: true,
-                body: Transfer{queryId: 0,
+                body: Transfer{queryId: msg.queryId,
                     newOwner: self.owner,
                     responseDestination: self.owner,
                     customPayload: null,
@@ -160,10 +160,10 @@ contract Task5 with Deployable {
         );
       } else {
         send(SendParameters{to: nft,
-                value: ton("0.08"),
-                mode: SendIgnoreErrors,
+                value: 0,
+                mode: SendPayGasSeparately,
                 bounce: true,
-                body: Transfer{queryId: 0,
+                body: Transfer{queryId: msg.queryId,
                 // ???
                     newOwner: self.owner,
                     responseDestination: self.owner,
@@ -174,7 +174,7 @@ contract Task5 with Deployable {
                 }.toCell()
             }
         );
-        tonAttached = tonAttached - ton("0.08");
+        // tonAttached = tonAttached - ton("0.08");
       }
       i = i + 1;
     }
