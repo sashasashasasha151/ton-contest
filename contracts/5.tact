@@ -150,11 +150,11 @@ contract Task5 with Deployable {
                 value: tonAttached,
                 mode: SendIgnoreErrors,
                 bounce: true,
-                body: Transfer{queryId: msg.queryId,
+                body: Transfer{queryId: 0,
                     newOwner: self.owner,
                     responseDestination: myAddress(),
                     customPayload: null,
-                    forwardAmount: 0,
+                    forwardAmount: ton("0.01"),
                     forwardPayload: emptySlice()
                 }.toCell()
             }
@@ -165,11 +165,11 @@ contract Task5 with Deployable {
                 value: value,
                 mode: SendIgnoreErrors,
                 bounce: true,
-                body: Transfer{queryId: msg.queryId,
+                body: Transfer{queryId: 0,
                     newOwner: self.owner,
                     responseDestination: myAddress(),
                     customPayload: null,
-                    forwardAmount: 0,
+                    forwardAmount: ton("0.01"),
                     forwardPayload: emptySlice()
                 }.toCell()
             }
