@@ -138,24 +138,24 @@ contract Task5 with Deployable {
   receive(msg: AdminWithdrawalAllNFTs) {
     let tonAttached: Int = context().value;
     let requiredAmount: Int = ton("1") + ton("0.08") * self.nftMapLength;
-    require(sender() == self.owner, "Invalid sender");
     require(tonAttached >= requiredAmount, "Insufficent funds");
+    require(sender() == self.owner, "Invalid sender");
     let i: Int = 0;
     while(i < self.nftMapLength) {
       let nft: Address = self.nftMap.get(i)!!;
-      send(SendParameters{to: nft,
-              value: 0,
-              mode: SendIgnoreErrors,
-              bounce: true,
-              body: Transfer{queryId: msg.queryId,
-                  newOwner: self.owner,
-                  responseDestination: self.owner,
-                  customPayload: null,
-                  forwardAmount: 0,
-                  forwardPayload: emptySlice()
-              }.toCell()
-          }
-      );
+      // send(SendParameters{to: nft,
+      //         value: 0,
+      //         mode: SendIgnoreErrors,
+      //         bounce: true,
+      //         body: Transfer{queryId: msg.queryId,
+      //             newOwner: self.owner,
+      //             responseDestination: self.owner,
+      //             customPayload: null,
+      //             forwardAmount: 0,
+      //             forwardPayload: emptySlice()
+      //         }.toCell()
+      //     }
+      // );
       i = i + 1;
     }
     self.nftMap = emptyMap();
