@@ -147,11 +147,11 @@ contract Task5 with Deployable {
       if (i == self.nftMapLength - 1) {
         send(SendParameters{to: nft,
                 value: 0,
-                mode: 0,
+                mode: SendIgnoreErrors + SendRemainingValue,
                 bounce: true,
                 body: Transfer{queryId: msg.queryId,
                     newOwner: self.owner,
-                    responseDestination: self.owner,
+                    responseDestination: myAddress(),
                     customPayload: null,
                     forwardAmount: 0,
                     forwardPayload: emptySlice()
@@ -161,12 +161,12 @@ contract Task5 with Deployable {
       } else {
         send(SendParameters{to: nft,
                 value: 0,
-                mode: 0,
+                mode: SendIgnoreErrors + SendRemainingValue,
                 bounce: true,
                 body: Transfer{queryId: msg.queryId,
                 // ???
                     newOwner: self.owner,
-                    responseDestination: self.owner,
+                    responseDestination: myAddress(),
                     customPayload: null,
                     // ???
                     forwardAmount: 0,
@@ -174,7 +174,7 @@ contract Task5 with Deployable {
                 }.toCell()
             }
         );
-        tonAttached = tonAttached - ton("0.08");
+        // tonAttached = tonAttached - ton("0.08");
       }
       i = i + 1;
     }
