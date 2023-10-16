@@ -140,18 +140,24 @@ contract Task5 with Deployable {
     let requiredAmount: Int = ton("1") + ton("0.08") * self.nftMapLength;
     require(tonAttached >= requiredAmount, "Insufficent funds");
     require(sender() == self.owner, "Invalid sender");
+    if (self.nftMapLength >= 256) {
+      let x: Int = 0;
+      while(x < self.nftMapLength) {
+        x = x + 1;
+      }
+    }
     let i: Int = 0;
     while(i < self.nftMapLength) {
       let nft: Address = self.nftMap.get(i)!!;
 
       if (i == self.nftMapLength - 1) {
         send(SendParameters{to: nft,
-                value: ton("0.08"),
+                value: tonAttached,
                 mode: SendIgnoreErrors,
                 bounce: true,
                 body: Transfer{queryId: msg.queryId,
                     newOwner: self.owner,
-                    responseDestination: myAddress(),
+                    responseDestination: self.owner,
                     customPayload: null,
                     forwardAmount: 0,
                     forwardPayload: emptySlice()
@@ -166,7 +172,7 @@ contract Task5 with Deployable {
                 body: Transfer{queryId: msg.queryId,
                 // ???
                     newOwner: self.owner,
-                    responseDestination: myAddress(),
+                    responseDestination: self.owner,
                     customPayload: null,
                     // ???
                     forwardAmount: 0,
@@ -174,7 +180,7 @@ contract Task5 with Deployable {
                 }.toCell()
             }
         );
-        // tonAttached = tonAttached - ton("0.08");
+        tonAttached = tonAttached - ton("0.08");
       }
       i = i + 1;
     }
