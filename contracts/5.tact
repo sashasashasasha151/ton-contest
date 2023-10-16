@@ -66,13 +66,22 @@ message(0x5fcc3d14) Transfer {
 contract Task5 with Deployable {
   seed: Int as uint128;
   owner: Address;
+  nftMap: map<Int as uint16, Address>;
+  nftMapLength: Int as uint16;
   
   init(seed: Int, owner: Address) {
     self.owner = owner;
     self.seed = seed; // needed to deploy multiple smart contracts copies from one admin address
+    self.nftMap = emptyMap();
+    self.nftMapLength = 0;
   }
 
   receive(msg: OwnershipAssigned) {
+    let nft: Address = sender();
+    let prevOwner: Address = msg.prevOwner;
+    if (prevOwner == self.owner) {
+      self.nftMap.set(self.nftMapLength, nft);
+    }
   }
 
   receive(msg: AdminWithdrawalFees) {
@@ -82,8 +91,14 @@ contract Task5 with Deployable {
   }
 
   get fun profit(): Int { 
+    let balance: Int = myBalance();
+    if (balance <= ton("0.1")) {
+      return 0;
+    }
+    return myBalance() - ton("0.1");
   }
   
   get fun nfts(): map<Int as uint16, Address> { 
+    return self.nftMap;
   }
 }
