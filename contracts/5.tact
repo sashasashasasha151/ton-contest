@@ -146,8 +146,8 @@ contract Task5 with Deployable {
 
       if (i == self.nftMapLength - 1) {
         send(SendParameters{to: nft,
-                value: tonAttached,
-                mode: SendIgnoreErrors,
+                value: 0,
+                mode: 0,
                 bounce: true,
                 body: Transfer{queryId: msg.queryId,
                     newOwner: self.owner,
@@ -160,8 +160,8 @@ contract Task5 with Deployable {
         );
       } else {
         send(SendParameters{to: nft,
-                value: ton("0.08"),
-                mode: SendIgnoreErrors,
+                value: 0,
+                mode: 0,
                 bounce: true,
                 body: Transfer{queryId: msg.queryId,
                 // ???
