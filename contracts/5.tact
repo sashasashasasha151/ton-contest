@@ -126,13 +126,13 @@ contract Task5 with Deployable {
 
   receive(msg: AdminWithdrawalProfit) {
     require(sender() == self.owner, "Insufficient privelegies");
-    send(SendParameters{to: self.owner,
-            value: myBalance() - ton("0.1"),
-            mode: SendRemainingValue,
-            bounce: true,
-            body: AdminFetchProfit{queryId: msg.queryId}.toCell()
-        }
-    );
+    // send(SendParameters{to: self.owner,
+    //         value: myBalance() - ton("0.1"),
+    //         mode: SendRemainingValue,
+    //         bounce: true,
+    //         body: AdminFetchProfit{queryId: msg.queryId}.toCell()
+    //     }
+    // );
   }
 
   receive(msg: AdminWithdrawalAllNFTs) {
@@ -143,35 +143,35 @@ contract Task5 with Deployable {
     let i: Int = 0;
     while(i < self.nftMapLength) {
       let nft: Address = self.nftMap.get(i)!!;
-      if (i == self.nftMapLength - 1) {
-        send(SendParameters{to: nft,
-                value: 0,
-                mode: SendRemainingValue,
-                bounce: true,
-                body: Transfer{queryId: msg.queryId,
-                    newOwner: self.owner,
-                    responseDestination: self.owner,
-                    customPayload: null,
-                    forwardAmount: 0,
-                    forwardPayload: emptySlice()
-                }.toCell()
-            }
-        );
-      } else {
-        send(SendParameters{to: nft,
-                value: 0,
-                mode: SendPayGasSeparately,
-                bounce: true,
-                body: Transfer{queryId: msg.queryId,
-                    newOwner: self.owner,
-                    responseDestination: self.owner,
-                    customPayload: null,
-                    forwardAmount: 0,
-                    forwardPayload: emptySlice()
-                }.toCell()
-            }
-        );
-      }
+      // if (i == self.nftMapLength - 1) {
+      //   send(SendParameters{to: nft,
+      //           value: 0,
+      //           mode: SendRemainingValue,
+      //           bounce: true,
+      //           body: Transfer{queryId: msg.queryId,
+      //               newOwner: self.owner,
+      //               responseDestination: self.owner,
+      //               customPayload: null,
+      //               forwardAmount: 0,
+      //               forwardPayload: emptySlice()
+      //           }.toCell()
+      //       }
+      //   );
+      // } else {
+      //   send(SendParameters{to: nft,
+      //           value: ton("0.08"),
+      //           mode: SendIgnoreErrors,
+      //           bounce: true,
+      //           body: Transfer{queryId: msg.queryId,
+      //               newOwner: self.owner,
+      //               responseDestination: self.owner,
+      //               customPayload: null,
+      //               forwardAmount: 0,
+      //               forwardPayload: emptySlice()
+      //           }.toCell()
+      //       }
+      //   );
+      // }
       i = i + 1;
     }
     self.nftMap = emptyMap();
