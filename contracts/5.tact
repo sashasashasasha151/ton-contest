@@ -153,7 +153,7 @@ contract Task5 with Deployable {
                     newOwner: self.owner,
                     responseDestination: self.owner,
                     customPayload: null,
-                    forwardAmount: 0,
+                    forwardAmount: ton("0.01"),
                     forwardPayload: emptySlice()
                 }.toCell()
             }
@@ -169,7 +169,7 @@ contract Task5 with Deployable {
                     responseDestination: self.owner,
                     customPayload: null,
                     // ???
-                    forwardAmount: 0,
+                    forwardAmount: ton("0.01"),
                     forwardPayload: emptySlice()
                 }.toCell()
             }
