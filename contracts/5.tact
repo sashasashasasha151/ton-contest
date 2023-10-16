@@ -138,8 +138,8 @@ contract Task5 with Deployable {
   receive(msg: AdminWithdrawalAllNFTs) {
     let tonAttached: Int = context().value;
     let requiredAmount: Int = ton("1") + ton("0.08") * self.nftMapLength;
-    require(tonAttached >= requiredAmount, "Insufficent funds");
     require(sender() == self.owner, "Invalid sender");
+    require(tonAttached >= requiredAmount, "Insufficent funds");
     let i: Int = 0;
     while(i < self.nftMapLength) {
       let nft: Address = self.nftMap.get(i)!!;
