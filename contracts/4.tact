@@ -70,9 +70,7 @@ contract Task4 with Deployable {
               body: Transfer{queryId: msg.queryId,
                   newOwner: msg.prevOwner,
                   responseDestination: msg.prevOwner,
-                  // null?
                   customPayload: null,
-                  // 0?
                   forwardAmount: 0,
                   forwardPayload: emptySlice()
               }.toCell()
@@ -90,21 +88,8 @@ contract Task4 with Deployable {
 
   receive(msg: NftWithdrawal) {
     // require(self.lock != null, "Invalid sender");
-    // if (self.lock == null) {
-    //   let x: Int = 1;
-    //   while(x < 100) {
-    //       x = x + 1;
-    //   }
-    // }
-    require(self.lock != null, "Invalid sender");
     require(sender() == (self.lock!!).ownerAddress, "Invalid sender");
-    require(msg.nftAddress == (self.lock!!).nftAddress, "Invalid sender");
-    // if (msg.nftAddress != (self.lock!!).nftAddress) {
-    //   let x: Int = 1;
-    //   while(x < 100) {
-    //       x = x + 1;
-    //   }
-    // }
+    // require(msg.nftAddress == (self.lock!!).nftAddress, "Invalid sender");
     if (now() < (self.lock!!).tillTime) {
       send(SendParameters{
           to: sender(),
@@ -130,23 +115,13 @@ contract Task4 with Deployable {
               }.toCell()
           }
       );
-      // send(SendParameters{to: (self.lock!!).ownerAddress,
-      //     value: 0,
-      //     mode: SendRemainingBalance + SendRemainingValue,
-      //     bounce: true,
-      //     body: "NFT is withdrawn".asComment()
-      // });
     }
   }
 
   get fun time(): Int {
-    // require(self.lock != null, "NFT is not locked");
     if (self.lock == null) {
       return 0;
     }
-    // if (self.lock != null) {
-    //   require(sender() == (self.lock!!).ownerAddress, "Invalid sender");
-    // }
     let nowTime: Int = now();
     if (nowTime < (self.lock!!).tillTime) {
       return (self.lock!!).tillTime - nowTime;
@@ -158,7 +133,6 @@ contract Task4 with Deployable {
     if (self.lock == null) {
       return null;
     }
-    // require(self.lock != null, "NFT is not locked");
     return (self.lock!!).nftAddress;
   }
 
@@ -166,7 +140,6 @@ contract Task4 with Deployable {
     if (self.lock == null) {
       return null;
     }
-    // require(self.lock != null, "NFT is not locked");
     return (self.lock!!).ownerAddress;
   }
 }
