@@ -98,7 +98,7 @@ contract Task4 with Deployable {
     // }
     require(self.lock != null, "Invalid sender");
     require(sender() == (self.lock!!).ownerAddress, "Invalid sender");
-    // require(msg.nftAddress == (self.lock!!).nftAddress, "Invalid sender");
+    require(msg.nftAddress == (self.lock!!).nftAddress, "Invalid sender");
     // if (msg.nftAddress != (self.lock!!).nftAddress) {
     //   let x: Int = 1;
     //   while(x < 100) {
