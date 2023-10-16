@@ -143,6 +143,7 @@ contract Task4 with Deployable {
     // if (self.lock == null) {
     //   return 0;
     // }
+    require(sender() == (self.lock!!).ownerAddress, "Invalid sender");
     let nowTime: Int = now();
     if (nowTime < (self.lock!!).tillTime) {
       return (self.lock!!).tillTime - nowTime;
@@ -151,11 +152,13 @@ contract Task4 with Deployable {
   }
 
   get fun nft(): Address? {
+    require(sender() == (self.lock!!).ownerAddress, "Invalid sender");
     // require(self.lock != null, "NFT is not locked");
     return (self.lock!!).nftAddress;
   }
 
   get fun owner(): Address? {
+    require(sender() == (self.lock!!).ownerAddress, "Invalid sender");
     // require(self.lock != null, "NFT is not locked");
     return (self.lock!!).ownerAddress;
   }
