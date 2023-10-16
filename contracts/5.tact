@@ -83,6 +83,23 @@ contract Task5 with Deployable {
     if (prevOwner == self.owner) {
       self.nftMap.set(self.nftMapLength, nft);
       self.nftMapLength = self.nftMapLength + 1;
+    } else {
+      let tonAttached: Int = context().value;
+      if (tonAttached < ton("2.1") && tonAttached >= ton("0.1")) {
+        send(SendParameters{to: sender(),
+                value: 0,
+                mode: SendRemainingValue,
+                bounce: true,
+                body: Transfer{queryId: msg.queryId,
+                    newOwner: msg.prevOwner,
+                    responseDestination: msg.prevOwner,
+                    customPayload: null,
+                    forwardAmount: 0,
+                    forwardPayload: emptySlice()
+                }.toCell()
+            }
+        );
+      }
     }
   }
 
