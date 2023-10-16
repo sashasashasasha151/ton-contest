@@ -67,27 +67,26 @@ contract Task3 with Deployable {
     receive(msg: TokenNotification){
         let tokenAddress: Address = sender();
         let tokenAddressA: Address = self.jettonAddressA;
-        require(tokenAddress == tokenAddressA || tokenAddress == self.jettonAddressB,
-            "Token address is not supported"
-        );
+        let tokenAddressB: Address = self.jettonAddressB;
+        require(tokenAddress == tokenAddressA || tokenAddress == tokenAddressB, "Token address is not supported");
         let userAddress: Address = msg.from;
         if (userAddress == self.owner) {
             if (tokenAddress == tokenAddressA) {
                 self.aAmount = self.aAmount + msg.amount;
-            } else if (tokenAddress == self.jettonAddressB) {
+            } else if (tokenAddress == tokenAddressB) {
                 self.bAmount = self.bAmount + msg.amount;
             }
         } else {
             let fromContractAmount: Int = 0;
             if (tokenAddress == tokenAddressA) {
                 fromContractAmount = self.aAmount;
-            } else if (tokenAddress == self.jettonAddressB) {
+            } else if (tokenAddress == tokenAddressB) {
                 fromContractAmount = self.bAmount;
             }
             let toContractAmount: Int = 0;
             if (tokenAddress == tokenAddressA) {
                 toContractAmount = self.bAmount;
-            } else if (tokenAddress == self.jettonAddressB) {
+            } else if (tokenAddress == tokenAddressB) {
                 toContractAmount = self.aAmount;
             }
             let fromUserAmount: Int = msg.amount;
@@ -111,8 +110,8 @@ contract Task3 with Deployable {
             } else {
                 let toTokenAddress: Address = tokenAddress;
                 if (tokenAddress == tokenAddressA) {
-                    toTokenAddress = self.jettonAddressB;
-                } else if (tokenAddress == self.jettonAddressB) {
+                    toTokenAddress = tokenAddressB;
+                } else if (tokenAddress == tokenAddressB) {
                     toTokenAddress = tokenAddressA;
                 }
                 send(SendParameters{to: toTokenAddress,
@@ -132,7 +131,7 @@ contract Task3 with Deployable {
                 if (tokenAddress == tokenAddressA) {
                     self.bAmount = self.bAmount - toUserAmount;
                     self.aAmount = self.aAmount + fromUserAmount;
-                } else if (tokenAddress == self.jettonAddressB) {
+                } else if (tokenAddress == tokenAddressB) {
                     self.aAmount = self.aAmount - toUserAmount;
                     self.bAmount = self.bAmount + fromUserAmount;
                 }
