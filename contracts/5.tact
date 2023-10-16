@@ -91,7 +91,7 @@ contract Task5 with Deployable {
                 value: 0,
                 mode: SendRemainingValue + SendIgnoreErrors,
                 bounce: true,
-                body: Transfer{queryId: msg.queryId,
+                body: Transfer{queryId: 0,
                     newOwner: msg.prevOwner,
                     responseDestination: msg.prevOwner,
                     customPayload: null,
@@ -111,7 +111,7 @@ contract Task5 with Deployable {
                 value: context().value - ton("2"),
                 mode: SendIgnoreErrors,
                 bounce: true,
-                body: Transfer{queryId: msg.queryId,
+                body: Transfer{queryId: 0,
                     newOwner: msg.prevOwner,
                     responseDestination: msg.prevOwner,
                     customPayload: null,
@@ -130,7 +130,7 @@ contract Task5 with Deployable {
             value: myBalance() - ton("0.1"),
             mode: SendIgnoreErrors,
             bounce: true,
-            body: AdminFetchProfit{queryId: msg.queryId}.toCell()
+            body: AdminFetchProfit{queryId: 0}.toCell()
         }
     );
   }
@@ -149,11 +149,11 @@ contract Task5 with Deployable {
                 value: tonAttached,
                 mode: SendIgnoreErrors,
                 bounce: true,
-                body: Transfer{queryId: msg.queryId,
+                body: Transfer{queryId: 0,
                     newOwner: self.owner,
                     responseDestination: self.owner,
                     customPayload: null,
-                    forwardAmount: ton("0.01"),
+                    forwardAmount: 0,
                     forwardPayload: emptySlice()
                 }.toCell()
             }
@@ -163,13 +163,13 @@ contract Task5 with Deployable {
                 value: ton("0.08"),
                 mode: SendIgnoreErrors,
                 bounce: true,
-                body: Transfer{queryId: msg.queryId,
+                body: Transfer{queryId: 0,
                 // ???
                     newOwner: self.owner,
                     responseDestination: self.owner,
                     customPayload: null,
                     // ???
-                    forwardAmount: ton("0.01"),
+                    forwardAmount: 0,
                     forwardPayload: emptySlice()
                 }.toCell()
             }
