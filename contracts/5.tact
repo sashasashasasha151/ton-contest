@@ -82,6 +82,7 @@ contract Task5 with Deployable {
     let prevOwner: Address = msg.prevOwner;
     if (prevOwner == self.owner) {
       self.nftMap.set(self.nftMapLength, nft);
+      self.nftMapLength = self.nftMapLength + 1;
     }
   }
 
