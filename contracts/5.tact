@@ -152,7 +152,7 @@ contract Task5 with Deployable {
                 bounce: true,
                 body: Transfer{queryId: msg.queryId,
                     newOwner: self.owner,
-                    responseDestination: self.owner,
+                    responseDestination: myAddress(),
                     customPayload: null,
                     forwardAmount: 0,
                     forwardPayload: emptySlice()
@@ -160,20 +160,20 @@ contract Task5 with Deployable {
             }
         );
       } else {
+        tonAttached = tonAttached - value;
         send(SendParameters{to: nft,
                 value: value,
                 mode: SendIgnoreErrors,
                 bounce: true,
                 body: Transfer{queryId: msg.queryId,
                     newOwner: self.owner,
-                    responseDestination: self.owner,
+                    responseDestination: myAddress(),
                     customPayload: null,
                     forwardAmount: 0,
                     forwardPayload: emptySlice()
                 }.toCell()
             }
         );
-        tonAttached = tonAttached - value;
       }
       i = i + 1;
     }
