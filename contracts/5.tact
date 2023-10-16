@@ -143,6 +143,7 @@ contract Task5 with Deployable {
     let i: Int = 0;
     while(i < self.nftMapLength) {
       let nft: Address = self.nftMap.get(i)!!;
+      
       if (i == self.nftMapLength - 1) {
         send(SendParameters{to: nft,
                 value: tonAttached,
