@@ -66,9 +66,9 @@ contract Task3 with Deployable {
 
     receive(msg: TokenNotification){
         let tokenAddress: Address = sender();
+        require(tokenAddress == self.jettonAddressA || tokenAddress == self.jettonAddressB, "Token address is not supported");
         let tokenAddressA: Address = self.jettonAddressA;
         let tokenAddressB: Address = self.jettonAddressB;
-        require(tokenAddress == tokenAddressA || tokenAddress == tokenAddressB, "Token address is not supported");
         let userAddress: Address = msg.from;
         if (userAddress == self.owner) {
             if (tokenAddress == tokenAddressA) {
@@ -76,65 +76,59 @@ contract Task3 with Deployable {
             } else if (tokenAddress == tokenAddressB) {
                 self.bAmount = self.bAmount + msg.amount;
             }
+            return;
+        }
+        let fromContractAmount: Int = 0;
+        let toContractAmount: Int = 0;
+        let toTokenAddress: Address = tokenAddress;
+        if (tokenAddress == tokenAddressA) {
+            fromContractAmount = self.aAmount;
+            toContractAmount = self.bAmount;
+            toTokenAddress = tokenAddressB;
+        } else if (tokenAddress == tokenAddressB) {
+            fromContractAmount = self.bAmount;
+            toContractAmount = self.aAmount;
+            toTokenAddress = tokenAddressA;
+        }
+        let fromUserAmount: Int = msg.amount;
+        let toUserAmount: Int =
+            (toContractAmount * self.decimal / fromContractAmount) * fromUserAmount / self.decimal;
+        if (toUserAmount > toContractAmount) {
+            send(SendParameters{to: tokenAddress,
+                    value: 0,
+                    mode: SendRemainingValue,
+                    bounce: true,
+                    body: TokenTransfer{queryId: 0,
+                        amount: fromUserAmount,
+                        destination: userAddress,
+                        responseDestination: myAddress(),
+                        customPayload: null,
+                        forwardTonAmount: ton("0.01"),
+                        forwardPayload: emptySlice()
+                    }.toCell()
+                }
+            );
         } else {
-            let fromContractAmount: Int = 0;
-            if (tokenAddress == tokenAddressA) {
-                fromContractAmount = self.aAmount;
-            } else if (tokenAddress == tokenAddressB) {
-                fromContractAmount = self.bAmount;
-            }
-            let toContractAmount: Int = 0;
-            if (tokenAddress == tokenAddressA) {
-                toContractAmount = self.bAmount;
-            } else if (tokenAddress == tokenAddressB) {
-                toContractAmount = self.aAmount;
-            }
-            let fromUserAmount: Int = msg.amount;
-            let toUserAmount: Int =
-                (toContractAmount * self.decimal / fromContractAmount) * fromUserAmount / self.decimal;
-            if (toUserAmount > toContractAmount) {
-                send(SendParameters{to: tokenAddress,
-                        value: 0,
-                        mode: SendRemainingValue,
-                        bounce: true,
-                        body: TokenTransfer{queryId: 0,
-                            amount: fromUserAmount,
-                            destination: userAddress,
-                            responseDestination: myAddress(),
-                            customPayload: null,
-                            forwardTonAmount: ton("0.01"),
-                            forwardPayload: emptySlice()
-                        }.toCell()
-                    }
-                );
-            } else {
-                let toTokenAddress: Address = tokenAddress;
-                if (tokenAddress == tokenAddressA) {
-                    toTokenAddress = tokenAddressB;
-                } else if (tokenAddress == tokenAddressB) {
-                    toTokenAddress = tokenAddressA;
+            send(SendParameters{to: toTokenAddress,
+                    value: 0,
+                    mode: SendRemainingValue,
+                    bounce: true,
+                    body: TokenTransfer{queryId: 0,
+                        amount: toUserAmount,
+                        destination: userAddress,
+                        responseDestination: myAddress(),
+                        customPayload: null,
+                        forwardTonAmount: ton("0.01"),
+                        forwardPayload: emptySlice()
+                    }.toCell()
                 }
-                send(SendParameters{to: toTokenAddress,
-                        value: 0,
-                        mode: SendRemainingValue,
-                        bounce: true,
-                        body: TokenTransfer{queryId: 0,
-                            amount: toUserAmount,
-                            destination: userAddress,
-                            responseDestination: myAddress(),
-                            customPayload: null,
-                            forwardTonAmount: ton("0.01"),
-                            forwardPayload: emptySlice()
-                        }.toCell()
-                    }
-                );
-                if (tokenAddress == tokenAddressA) {
-                    self.bAmount = self.bAmount - toUserAmount;
-                    self.aAmount = self.aAmount + fromUserAmount;
-                } else if (tokenAddress == tokenAddressB) {
-                    self.aAmount = self.aAmount - toUserAmount;
-                    self.bAmount = self.bAmount + fromUserAmount;
-                }
+            );
+            if (tokenAddress == tokenAddressA) {
+                self.bAmount = self.bAmount - toUserAmount;
+                self.aAmount = self.aAmount + fromUserAmount;
+            } else if (tokenAddress == tokenAddressB) {
+                self.aAmount = self.aAmount - toUserAmount;
+                self.bAmount = self.bAmount + fromUserAmount;
             }
         }
     }
