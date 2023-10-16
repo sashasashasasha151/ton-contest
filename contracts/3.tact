@@ -86,10 +86,8 @@ contract Task3 with Deployable {
             // Contract balance from
             let fromContractAmount: Int = 0;
             if (tokenAddress == self.jettonAddressA) {
-                // ????
                 fromContractAmount = self.aAmount;
             } else if (tokenAddress == self.jettonAddressB) {
-                // ????
                 fromContractAmount = self.bAmount;
             }
             // Contract balance to
@@ -129,7 +127,6 @@ contract Task3 with Deployable {
                 } else if (tokenAddress == self.jettonAddressB) {
                     toTokenAddress = self.jettonAddressA;
                 }
-                
                 send(SendParameters{to: toTokenAddress,
                         value: 0,
                         mode: SendRemainingValue,
