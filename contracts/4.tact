@@ -141,9 +141,9 @@ contract Task4 with Deployable {
 
   get fun time(): Int {
     // require(self.lock != null, "NFT is not locked");
-    // if (self.lock == null) {
-    //   return 0;
-    // }
+    if (self.lock == null) {
+      return 0;
+    }
     // if (self.lock != null) {
     //   require(sender() == (self.lock!!).ownerAddress, "Invalid sender");
     // }
@@ -155,17 +155,17 @@ contract Task4 with Deployable {
   }
 
   get fun nft(): Address? {
-    // if (self.lock != null) {
-    //   require(sender() == (self.lock!!).ownerAddress, "Invalid sender");
-    // }
+    if (self.lock == null) {
+      return null;
+    }
     // require(self.lock != null, "NFT is not locked");
     return (self.lock!!).nftAddress;
   }
 
   get fun owner(): Address? {
-    // if (self.lock != null) {
-    //   require(sender() == (self.lock!!).ownerAddress, "Invalid sender");
-    // }
+    if (self.lock == null) {
+      return null;
+    }
     // require(self.lock != null, "NFT is not locked");
     return (self.lock!!).ownerAddress;
   }
