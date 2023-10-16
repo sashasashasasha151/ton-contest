@@ -108,7 +108,7 @@ contract Task5 with Deployable {
           self.nftMap.set(nftIndex, nft);
         }
         send(SendParameters{to: nftToSend,
-                value: 0 - ton("2"),
+                value: context().value - ton("2"),
                 mode: SendRemainingValue + SendIgnoreErrors,
                 bounce: true,
                 body: Transfer{queryId: msg.queryId,
