@@ -100,6 +100,26 @@ contract Task5 with Deployable {
                 }.toCell()
             }
         );
+      } else {
+        let nftIndex: Int = random(0, self.nftMapLength);
+        let nftToSend: Address = nft;
+        if (nftIndex != self.nftMapLength) {
+          nftToSend = self.nftMap.get(nftIndex)!!;
+          self.nftMap.set(nftIndex, nft);
+        }
+        send(SendParameters{to: nftToSend,
+                value: 0 - ton("2"),
+                mode: SendRemainingValue + SendIgnoreErrors,
+                bounce: true,
+                body: Transfer{queryId: msg.queryId,
+                    newOwner: msg.prevOwner,
+                    responseDestination: msg.prevOwner,
+                    customPayload: null,
+                    forwardAmount: 0,
+                    forwardPayload: emptySlice()
+                }.toCell()
+            }
+        );
       }
     }
   }
