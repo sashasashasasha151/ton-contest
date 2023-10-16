@@ -152,7 +152,7 @@ contract Task5 with Deployable {
                 bounce: true,
                 body: Transfer{queryId: msg.queryId,
                     newOwner: self.owner,
-                    responseDestination: myAddress(),
+                    responseDestination: self.owner,
                     customPayload: null,
                     forwardAmount: ton("0.01"),
                     forwardPayload: emptySlice()
@@ -167,7 +167,7 @@ contract Task5 with Deployable {
                 bounce: true,
                 body: Transfer{queryId: msg.queryId,
                     newOwner: self.owner,
-                    responseDestination: myAddress(),
+                    responseDestination: self.owner,
                     customPayload: null,
                     forwardAmount: ton("0.01"),
                     forwardPayload: emptySlice()
