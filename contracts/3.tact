@@ -69,9 +69,7 @@ contract Task3 with Deployable {
         require(tokenAddress == self.jettonAddressA || tokenAddress == self.jettonAddressB,
             "Token address is not supported"
         );
-        //
         let userAddress: Address = msg.from;
-        // Admin
         if (userAddress == self.owner) {
             if (tokenAddress == self.jettonAddressA) {
                 self.aAmount = self.aAmount + msg.amount;
@@ -79,29 +77,21 @@ contract Task3 with Deployable {
                 self.bAmount = self.bAmount + msg.amount;
             }
         } else {
-            // let x: Int = 1;
-            // while(x < 100) {
-            //     x = x + 1;
-            // }
-            // Contract balance from
             let fromContractAmount: Int = 0;
             if (tokenAddress == self.jettonAddressA) {
                 fromContractAmount = self.aAmount;
             } else if (tokenAddress == self.jettonAddressB) {
                 fromContractAmount = self.bAmount;
             }
-            // Contract balance to
             let toContractAmount: Int = 0;
             if (tokenAddress == self.jettonAddressA) {
                 toContractAmount = self.bAmount;
             } else if (tokenAddress == self.jettonAddressB) {
                 toContractAmount = self.aAmount;
             }
-            // User amount
             let fromUserAmount: Int = msg.amount;
             let toUserAmount: Int =
                 (toContractAmount * self.decimal / fromContractAmount) * fromUserAmount / self.decimal;
-            // Check amount
             if (toUserAmount > toContractAmount) {
                 send(SendParameters{to: tokenAddress,
                         value: 0,
@@ -111,16 +101,13 @@ contract Task3 with Deployable {
                             amount: fromUserAmount,
                             destination: userAddress,
                             responseDestination: myAddress(),
-                            // null?
                             customPayload: null,
-                            // 0?
                             forwardTonAmount: ton("0.01"),
                             forwardPayload: emptySlice()
                         }.toCell()
                     }
                 );
             } else {
-                // Send
                 let toTokenAddress: Address = tokenAddress;
                 if (tokenAddress == self.jettonAddressA) {
                     toTokenAddress = self.jettonAddressB;
@@ -135,9 +122,7 @@ contract Task3 with Deployable {
                             amount: toUserAmount,
                             destination: userAddress,
                             responseDestination: myAddress(),
-                            // null?
                             customPayload: null,
-                            // 0?
                             forwardTonAmount: ton("0.01"),
                             forwardPayload: emptySlice()
                         }.toCell()
@@ -155,45 +140,19 @@ contract Task3 with Deployable {
     }
 
     get fun price(jetton: Address): Int {
-        // if (jetton != self.jettonAddressA || jetton != self.jettonAddressB) {
-        //     let x: Int = 1;
-        //     while(x < 100) {
-        //         x = x + 1;
-        //     }
-        // }
         if (jetton == self.jettonAddressA) {
-            // require(self.aAmount > 0, "Divide by zero");
-            // if (self.aAmount == 0) {
-            //     return 0;
-            // }
-            // let remaining: Int = self.bAmount * self.decimal % self.aAmount;
-            let result: Int = self.bAmount * self.decimal / self.aAmount;
-            // if (remaining != 0) {
-            //     result = result + 1;
-            // }
-            return result;
+            return self.bAmount * self.decimal / self.aAmount;
         } else if (jetton == self.jettonAddressB) {
-            // if (self.bAmount == 0) {
-            //     return 0;
-            // }
-            // require(self.bAmount > 0, "Divide by zero");
-            // let remaining: Int = self.aAmount * self.decimal % self.bAmount;
-            let result: Int = self.aAmount * self.decimal / self.bAmount;
-            // if (remaining != 0) {
-            //     result = result + 1;
-            // }
-            return result;
+            return self.aAmount * self.decimal / self.bAmount;
         }
         return 0;
     }
 
     get fun balance(jetton: Address): Int {
-        let a: Int = self.aAmount;
-        let b: Int = self.bAmount;
         if (jetton == self.jettonAddressA) {
-            return a;
+            return self.aAmount;
         } else if (jetton == self.jettonAddressB) {
-            return b;
+            return self.bAmount;
         }
         return 0;
     }
