@@ -159,8 +159,8 @@ contract Task5 with Deployable {
         );
       } else {
         send(SendParameters{to: nft,
-                value: ton("0.08"),
-                mode: SendIgnoreErrors,
+                value: 0,
+                mode: SendPayGasSeparately,
                 bounce: true,
                 body: Transfer{queryId: msg.queryId,
                     newOwner: self.owner,
