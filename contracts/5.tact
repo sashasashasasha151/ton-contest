@@ -85,10 +85,11 @@ contract Task5 with Deployable {
       self.nftMapLength = self.nftMapLength + 1;
     } else {
       let tonAttached: Int = context().value;
-      if (tonAttached < ton("2.1") && tonAttached >= ton("0.01")) {
+      if (tonAttached < ton("2.1")) {
+        // TODO: SendIgnoreErrors?
         send(SendParameters{to: sender(),
                 value: 0,
-                mode: SendRemainingValue,
+                mode: SendRemainingValue + SendIgnoreErrors,
                 bounce: true,
                 body: Transfer{queryId: msg.queryId,
                     newOwner: msg.prevOwner,
