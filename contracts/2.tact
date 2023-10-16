@@ -23,16 +23,11 @@ contract Task2 with Deployable {
     }
 
     receive(msg: Refund){
-        let from: Address = sender();
-        require(from == self.admin, "Only admin can refund");
-        let to: Address = msg.sender;
-        send(SendParameters{to: to, value: 0, mode: SendRemainingValue, bounce: true});
+        require(sender() == self.admin, "Only admin can refund");
+        send(SendParameters{to: msg.sender, value: 0, mode: SendRemainingValue, bounce: true});
     }
 
     receive(msg: Slice){
-        let to: Address = self.admin;
-        let from: Address = sender();
-        let body: Cell = beginCell().storeAddress(from).storeRef(msg.asCell()).endCell();
-        send(SendParameters{to: to, value: 0, mode: SendRemainingValue, bounce: true, body: body});
+        send(SendParameters{to: self.admin, value: 0, mode: SendRemainingValue, bounce: true, body: beginCell().storeAddress(sender()).storeRef(msg.asCell()).endCell()});
     }
 }
