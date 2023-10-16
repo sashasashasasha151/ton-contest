@@ -116,8 +116,8 @@ contract Task3 with Deployable {
                             // null?
                             customPayload: null,
                             // 0?
-                            forwardTonAmount: 0,
-                            forwardPayload: msg.forwardPayload
+                            forwardTonAmount: ton("0.01"),
+                            forwardPayload: emptySlice()
                         }.toCell()
                     }
                 );
@@ -140,8 +140,8 @@ contract Task3 with Deployable {
                             // null?
                             customPayload: null,
                             // 0?
-                            forwardTonAmount: 0,
-                            forwardPayload: msg.forwardPayload
+                            forwardTonAmount: ton("0.01"),
+                            forwardPayload: emptySlice()
                         }.toCell()
                     }
                 );
