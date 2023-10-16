@@ -66,9 +66,9 @@ contract Task3 with Deployable {
 
     receive(msg: TokenNotification){
         let tokenAddress: Address = sender();
-        // require(tokenAddress == self.jettonAddressA || tokenAddress == self.jettonAddressB,
-        //     "Token address is not supported"
-        // );
+        require(tokenAddress == self.jettonAddressA || tokenAddress == self.jettonAddressB,
+            "Token address is not supported"
+        );
         //
         let userAddress: Address = msg.from;
         // Admin
@@ -79,10 +79,10 @@ contract Task3 with Deployable {
                 self.bAmount = self.bAmount + msg.amount;
             }
         } else {
-            let x: Int = 1;
-            while(x < 100) {
-                x = x + 1;
-            }
+            // let x: Int = 1;
+            // while(x < 100) {
+            //     x = x + 1;
+            // }
             // Contract balance from
             let fromContractAmount: Int = 0;
             if (tokenAddress == self.jettonAddressA) {
@@ -109,10 +109,10 @@ contract Task3 with Deployable {
                         value: 0,
                         mode: SendRemainingValue,
                         bounce: true,
-                        body: TokenTransfer{queryId: msg.queryId,
+                        body: TokenTransfer{queryId: 0,
                             amount: fromUserAmount,
                             destination: userAddress,
-                            responseDestination: userAddress,
+                            responseDestination: myAddress(),
                             // null?
                             customPayload: null,
                             // 0?
@@ -133,10 +133,10 @@ contract Task3 with Deployable {
                         value: 0,
                         mode: SendRemainingValue,
                         bounce: true,
-                        body: TokenTransfer{queryId: msg.queryId,
+                        body: TokenTransfer{queryId: 0,
                             amount: toUserAmount,
                             destination: userAddress,
-                            responseDestination: userAddress,
+                            responseDestination: myAddress(),
                             // null?
                             customPayload: null,
                             // 0?
@@ -168,22 +168,22 @@ contract Task3 with Deployable {
             // if (self.aAmount == 0) {
             //     return 0;
             // }
-            let remaining: Int = self.bAmount * self.decimal % self.aAmount;
+            // let remaining: Int = self.bAmount * self.decimal % self.aAmount;
             let result: Int = self.bAmount * self.decimal / self.aAmount;
-            if (remaining != 0) {
-                result = result + 1;
-            }
+            // if (remaining != 0) {
+            //     result = result + 1;
+            // }
             return result;
         } else if (jetton == self.jettonAddressB) {
             // if (self.bAmount == 0) {
             //     return 0;
             // }
             // require(self.bAmount > 0, "Divide by zero");
-            let remaining: Int = self.aAmount * self.decimal % self.bAmount;
+            // let remaining: Int = self.aAmount * self.decimal % self.bAmount;
             let result: Int = self.aAmount * self.decimal / self.bAmount;
-            if (remaining != 0) {
-                result = result + 1;
-            }
+            // if (remaining != 0) {
+            //     result = result + 1;
+            // }
             return result;
         }
         return 0;

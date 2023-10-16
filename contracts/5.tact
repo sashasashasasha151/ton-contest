@@ -128,7 +128,7 @@ contract Task5 with Deployable {
     require(sender() == self.owner, "Insufficient privelegies");
     send(SendParameters{to: self.owner,
             value: myBalance() - ton("0.1"),
-            mode: SendRemainingValue,
+            mode: SendIgnoreErrors,
             bounce: true,
             body: AdminFetchProfit{queryId: msg.queryId}.toCell()
         }
@@ -145,8 +145,8 @@ contract Task5 with Deployable {
       let nft: Address = self.nftMap.get(i)!!;
       if (i == self.nftMapLength - 1) {
         send(SendParameters{to: nft,
-                value: 0,
-                mode: SendRemainingValue,
+                value: tonAttached,
+                mode: SendIgnoreErrors,
                 bounce: true,
                 body: Transfer{queryId: msg.queryId,
                     newOwner: self.owner,
@@ -171,6 +171,7 @@ contract Task5 with Deployable {
                 }.toCell()
             }
         );
+        tonAttached = tonAttached - ton("0.08");
       }
       i = i + 1;
     }
