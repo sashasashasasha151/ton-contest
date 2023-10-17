@@ -50,8 +50,8 @@ message(0xf8a7ea5) TokenTransfer {
 
 contract Task3 with Deployable {
     owner: Address;
-    aAmount: Int = 0;
-    bAmount: Int = 0;
+    aAmount: Int as coins = 0;
+    bAmount: Int as coins = 0;
     jettonAddressA: Address;
     jettonAddressB: Address;
     const decimal: Int = 1000000000;
