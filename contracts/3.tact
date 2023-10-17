@@ -66,11 +66,11 @@ contract Task3 with Deployable {
     receive(msg: TokenNotification){
         let tokenAddress: Address = sender();
         require(tokenAddress == self.jettonAddressA || tokenAddress == self.jettonAddressB, "Token address is not supported");
-        let tokenAddressA: Address = self.jettonAddressA;
-        let tokenAddressB: Address = self.jettonAddressB;
+        // let tokenAddressA: Address = self.jettonAddressA;
+        // let tokenAddressB: Address = self.jettonAddressB;
         let userAddress: Address = msg.from;
         if (userAddress == self.owner) {
-            if (tokenAddress == tokenAddressA) {
+            if (tokenAddress == self.jettonAddressA) {
                 self.aAmount = self.aAmount + msg.amount;
             } else {
                 self.bAmount = self.bAmount + msg.amount;
@@ -80,14 +80,14 @@ contract Task3 with Deployable {
         let fromContractAmount: Int = 0;
         let toContractAmount: Int = 0;
         let toTokenAddress: Address = tokenAddress;
-        if (tokenAddress == tokenAddressA) {
+        if (tokenAddress == self.jettonAddressA) {
             fromContractAmount = self.aAmount;
             toContractAmount = self.bAmount;
-            toTokenAddress = tokenAddressB;
+            toTokenAddress = self.jettonAddressB;
         } else {
             fromContractAmount = self.bAmount;
             toContractAmount = self.aAmount;
-            toTokenAddress = tokenAddressA;
+            toTokenAddress = self.jettonAddressA;
         }
         let fromUserAmount: Int = msg.amount;
         let toUserAmount: Int =
@@ -122,7 +122,7 @@ contract Task3 with Deployable {
                     }.toCell()
                 }
             );
-            if (tokenAddress == tokenAddressA) {
+            if (tokenAddress == self.jettonAddressA) {
                 self.bAmount = self.bAmount - toUserAmount;
                 self.aAmount = self.aAmount + fromUserAmount;
             } else {
