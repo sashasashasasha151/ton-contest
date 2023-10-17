@@ -149,8 +149,9 @@ contract Task5 with Deployable {
   }
 
   receive(msg: WithdrawalProcess) {
-    if (self.nftMapLength == 1) {
-      send(SendParameters{to: self.nftMap.get(self.nftMapLength - 1)!!,
+    self.nftMapLength = self.nftMapLength - 1;
+    if (self.nftMapLength == 0) {
+      send(SendParameters{to: self.nftMap.get(self.nftMapLength)!!,
               value: 0,
               mode: SendRemainingValue,
               bounce: true,
@@ -166,8 +167,7 @@ contract Task5 with Deployable {
       self.nftMapLength = 0;
       self.nftMap = emptyMap();
     } else {
-      self.nftMapLength = self.nftMapLength - 1;
-      send(SendParameters{to: self.nftMap.get(self.nftMapLength - 1)!!,
+      send(SendParameters{to: self.nftMap.get(self.nftMapLength)!!,
               value: ton("0.08"),
               mode: SendIgnoreErrors,
               bounce: true,
