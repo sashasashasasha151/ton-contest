@@ -72,18 +72,22 @@ contract Task3 with Deployable {
         if (userAddress == self.owner) {
             if (tokenAddress == tokenAddressA) {
                 self.aAmount = self.aAmount + msg.amount;
-                return;
+            } else {
+                self.bAmount = self.bAmount + msg.amount;
             }
-            self.bAmount = self.bAmount + msg.amount;
             return;
         }
-        let fromContractAmount: Int = self.bAmount;
-        let toContractAmount: Int = self.aAmount;
-        let toTokenAddress: Address = tokenAddressA;
+        let fromContractAmount: Int = 0;
+        let toContractAmount: Int = 0;
+        let toTokenAddress: Address = tokenAddress;
         if (tokenAddress == tokenAddressA) {
             fromContractAmount = self.aAmount;
             toContractAmount = self.bAmount;
             toTokenAddress = tokenAddressB;
+        } else {
+            fromContractAmount = self.bAmount;
+            toContractAmount = self.aAmount;
+            toTokenAddress = tokenAddressA;
         }
         let fromUserAmount: Int = msg.amount;
         let toUserAmount: Int =
@@ -121,10 +125,10 @@ contract Task3 with Deployable {
             if (tokenAddress == tokenAddressA) {
                 self.bAmount = self.bAmount - toUserAmount;
                 self.aAmount = self.aAmount + fromUserAmount;
-                return;
+            } else {
+                self.aAmount = self.aAmount - toUserAmount;
+                self.bAmount = self.bAmount + fromUserAmount;
             }
-            self.aAmount = self.aAmount - toUserAmount;
-            self.bAmount = self.bAmount + fromUserAmount;
         }
     }
 
