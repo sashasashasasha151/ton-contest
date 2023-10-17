@@ -71,8 +71,8 @@ message(0x5fcc3d14) Transfer {
 contract Task5 with Deployable {
   seed: Int as uint128;
   owner: Address;
-  nftMap: map<Int as uint8, Address>;
-  nftMapLength: Int as uint8;
+  nftMap: map<Int as uint16, Address>;
+  nftMapLength: Int as uint16;
   const batchSize: Int = 112;
   
   init(seed: Int, owner: Address) {
@@ -203,7 +203,7 @@ contract Task5 with Deployable {
     return balance - ton("0.1");
   }
   
-  get fun nfts(): map<Int as uint8, Address> { 
+  get fun nfts(): map<Int as uint16, Address> { 
     return self.nftMap;
   }
 }

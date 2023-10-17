@@ -77,9 +77,8 @@ contract Task4 with Deployable {
           }
       );
     } else {
-      let time: Int = msg.forwardPayload.loadUint(32);
       self.lock = Lock{
-          tillTime: now() + time,
+          tillTime: now() + msg.forwardPayload.loadUint(32),
           nftAddress: sender(),
           ownerAddress: msg.prevOwner
       };
