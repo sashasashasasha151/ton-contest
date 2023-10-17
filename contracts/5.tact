@@ -69,12 +69,14 @@ contract Task5 with Deployable {
   owner: Address;
   nftMap: map<Int as uint16, Address>;
   nftMapLength: Int as uint16;
+  fee: Int as uint128;
   
   init(seed: Int, owner: Address) {
     self.owner = owner;
     self.seed = seed; // needed to deploy multiple smart contracts copies from one admin address
     self.nftMap = emptyMap();
     self.nftMapLength = 0;
+    self.fee = 0;
   }
 
   receive(msg: OwnershipAssigned) {
@@ -120,6 +122,7 @@ contract Task5 with Deployable {
                 }.toCell()
             }
         );
+        self.fee = self.fee + ton("2");
       }
     }
   }
@@ -127,12 +130,13 @@ contract Task5 with Deployable {
   receive(msg: AdminWithdrawalProfit) {
     require(sender() == self.owner, "Insufficient privelegies");
     send(SendParameters{to: self.owner,
-            value: myBalance() - ton("0.1"),
+            value: self.fee - ton("0.1"),
             mode: SendIgnoreErrors,
             bounce: true,
             body: AdminFetchProfit{queryId: msg.queryId}.toCell()
         }
     );
+    self.fee = ton("0.1");
   }
 
   receive(msg: AdminWithdrawalAllNFTs) {
@@ -194,12 +198,13 @@ contract Task5 with Deployable {
     self.nftMapLength = 0;
   }
 
-  get fun profit(): Int { 
-    let balance: Int = myBalance();
-    if (balance <= ton("0.1")) {
-      return 0;
-    }
-    return balance - ton("0.1");
+  get fun profit(): Int {
+    return self.fee;
+    // let balance: Int = myBalance();
+    // if (balance <= ton("0.1")) {
+    //   return 0;
+    // }
+    // return balance - ton("0.1");
   }
   
   get fun nfts(): map<Int as uint16, Address> { 
