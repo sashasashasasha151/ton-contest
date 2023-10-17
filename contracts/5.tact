@@ -56,7 +56,6 @@ message WithdrawalProcess {
 message(0x05138d91) OwnershipAssigned {
     queryId: Int as uint64;
     prevOwner: Address;
-    forwardPayload: Slice as remaining; 
 }
 
 message(0x5fcc3d14) Transfer { 
