@@ -86,9 +86,8 @@ contract Task4 with Deployable {
   }
 
   receive(msg: NftWithdrawal) {
-    let locked: Lock = self.lock!!;
-    require(sender() == locked.ownerAddress, "Invalid sender");
-    if (now() < locked.tillTime) {
+    require(sender() == (self.lock!!).ownerAddress, "Invalid sender");
+    if (now() < (self.lock!!).tillTime) {
       send(SendParameters{
           to: sender(),
           value: 0, 
