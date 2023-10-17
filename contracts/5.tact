@@ -150,7 +150,8 @@ contract Task5 with Deployable {
   }
 
   receive(msg: WithdrawalProcess) {
-    let value: Int = 0;
+    // let i: Int = 0;
+    // let value: Int = 0;
     let transfer: Cell = Transfer{queryId: msg.queryId,
                   newOwner: self.owner,
                   responseDestination: self.owner,
@@ -158,10 +159,14 @@ contract Task5 with Deployable {
                   forwardAmount: 0,
                   forwardPayload: emptySlice()
               }.toCell();
-    repeat(min(self.nftMapLength - 1, self.batchSize)) {
+    let repeatNumber: Int = 0;
+    if (self.nftMapLength > self.batchSize) {
+      repeatNumber = self.batchSize;
+    } else {
+      repeatNumber = self.nftMapLength - 1;
+    }
+    repeat(repeatNumber) {
       self.nftMapLength = self.nftMapLength - 1;
-      // i = i + 1;
-      value = value + ton("0.08");
       send(SendParameters{to: self.nftMap.get(self.nftMapLength)!!,
               value: ton("0.08"),
               mode: SendIgnoreErrors,
@@ -173,7 +178,7 @@ contract Task5 with Deployable {
 
     if (self.nftMapLength > 1) {
       send(SendParameters{to: myAddress(),
-              value: context().value - value,
+              value: context().value - ton("0.08") * repeatNumber,
               mode: SendIgnoreErrors,
               bounce: true,
               body: WithdrawalProcess{queryId: msg.queryId}.toCell()
