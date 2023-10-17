@@ -49,6 +49,10 @@ message AdminFetchProfit {
   queryId: Int as uint64;
 }
 
+message WithdrawalProcess {
+  queryId: Int as uint64;
+}
+
 message(0x05138d91) OwnershipAssigned {
     queryId: Int as uint64;
     prevOwner: Address;
@@ -70,14 +74,14 @@ contract Task5 with Deployable {
   nftMap: map<Int as uint16, Address>;
   nftMapLength: Int as uint16;
   const batchSize: Int = 64;
-  queryId: Int as uint64;
+  emptySlice: Slice;
   
   init(seed: Int, owner: Address) {
     self.owner = owner;
     self.seed = seed; // needed to deploy multiple smart contracts copies from one admin address
     self.nftMap = emptyMap();
     self.nftMapLength = 0;
-    self.queryId = 0;
+    self.emptySlice = emptySlice();
   }
 
   receive(msg: OwnershipAssigned) {
@@ -96,7 +100,7 @@ contract Task5 with Deployable {
                     responseDestination: msg.prevOwner,
                     customPayload: null,
                     forwardAmount: 0,
-                    forwardPayload: emptySlice()
+                    forwardPayload: self.emptySlice
                 }.toCell()
             }
         );
@@ -116,7 +120,7 @@ contract Task5 with Deployable {
                     responseDestination: msg.prevOwner,
                     customPayload: null,
                     forwardAmount: 0,
-                    forwardPayload: emptySlice()
+                    forwardPayload: self.emptySlice
                 }.toCell()
             }
         );
@@ -138,16 +142,16 @@ contract Task5 with Deployable {
   receive(msg: AdminWithdrawalAllNFTs) {
     require(context().value >= (ton("1") + ton("0.08") * self.nftMapLength), "Insufficent funds");
     require(sender() == self.owner, "Invalid sender");
-    self.queryId = msg.queryId;
     send(SendParameters{to: myAddress(),
             value: 0,
             mode: SendRemainingValue,
-            bounce: true
+            bounce: true,
+            body: WithdrawalProcess{queryId: msg.queryId}.toCell()
         }
     );
   }
 
-  receive() {
+  receive(msg: WithdrawalProcess) {
     let i: Int = 0;
     let value: Int = 0;
     while (i < self.batchSize && self.nftMapLength > 1) {
@@ -158,12 +162,12 @@ contract Task5 with Deployable {
               value: ton("0.08"),
               mode: SendIgnoreErrors,
               bounce: true,
-              body: Transfer{queryId: self.queryId,
+              body: Transfer{queryId: msg.queryId,
                   newOwner: self.owner,
                   responseDestination: self.owner,
                   customPayload: null,
                   forwardAmount: 0,
-                  forwardPayload: emptySlice()
+                  forwardPayload: self.emptySlice
               }.toCell()
           }
       );
@@ -173,7 +177,8 @@ contract Task5 with Deployable {
       send(SendParameters{to: myAddress(),
               value: context().value - value,
               mode: SendIgnoreErrors,
-              bounce: true
+              bounce: true,
+              body: WithdrawalProcess{queryId: msg.queryId}.toCell()
           }
       );
     } else {
@@ -181,12 +186,12 @@ contract Task5 with Deployable {
               value: 0,
               mode: SendRemainingValue,
               bounce: true,
-              body: Transfer{queryId: self.queryId,
+              body: Transfer{queryId: msg.queryId,
                   newOwner: self.owner,
                   responseDestination: self.owner,
                   customPayload: null,
                   forwardAmount: 0,
-                  forwardPayload: emptySlice()
+                  forwardPayload: self.emptySlice
               }.toCell()
           }
       );
