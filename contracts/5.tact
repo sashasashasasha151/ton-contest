@@ -73,7 +73,7 @@ contract Task5 with Deployable {
   owner: Address;
   nftMap: map<Int as uint16, Address>;
   nftMapLength: Int as uint16;
-  const batchSize: Int = 112;
+  const batchSize: Int = 96;
   
   init(seed: Int, owner: Address) {
     self.owner = owner;
@@ -150,7 +150,7 @@ contract Task5 with Deployable {
   }
 
   receive(msg: WithdrawalProcess) {
-    let i: Int = 0;
+    // let i: Int = 0;
     let value: Int = 0;
     let transfer: Cell = Transfer{queryId: msg.queryId,
                   newOwner: self.owner,
@@ -159,9 +159,10 @@ contract Task5 with Deployable {
                   forwardAmount: 0,
                   forwardPayload: emptySlice()
               }.toCell();
-    while (i < self.batchSize && self.nftMapLength > 1) {
+    let repeatNumber: Int = min(self.nftMapLength, self.batchSize);
+    repeat(repeatNumber) {
       self.nftMapLength = self.nftMapLength - 1;
-      i = i + 1;
+      // i = i + 1;
       value = value + ton("0.08");
       send(SendParameters{to: self.nftMap.get(self.nftMapLength)!!,
               value: ton("0.08"),
