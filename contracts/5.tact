@@ -140,41 +140,54 @@ contract Task5 with Deployable {
     let requiredAmount: Int = ton("1") + ton("0.08") * self.nftMapLength;
     require(tonAttached >= requiredAmount, "Insufficent funds");
     require(sender() == self.owner, "Invalid sender");
-    let value: Int = tonAttached * 1000000000 / self.nftMapLength;
+    // let value: Int = tonAttached * 1000000000 / self.nftMapLength;
     let i: Int = 0;
     while(i < self.nftMapLength) {
       let nft: Address = self.nftMap.get(i)!!;
+      send(SendParameters{to: nft,
+              value: ton("0.08"),
+              mode: SendIgnoreErrors,
+              bounce: true,
+              body: Transfer{queryId: msg.queryId,
+                  newOwner: self.owner,
+                  responseDestination: self.owner,
+                  customPayload: null,
+                  forwardAmount: 0,
+                  forwardPayload: emptySlice()
+              }.toCell()
+          }
+      );
 
-      if (i == self.nftMapLength - 1) {
-        send(SendParameters{to: nft,
-                value: tonAttached,
-                mode: SendIgnoreErrors,
-                bounce: true,
-                body: Transfer{queryId: msg.queryId,
-                    newOwner: self.owner,
-                    responseDestination: self.owner,
-                    customPayload: null,
-                    forwardAmount: ton("0.01"),
-                    forwardPayload: emptySlice()
-                }.toCell()
-            }
-        );
-      } else {
-        tonAttached = tonAttached - value;
-        send(SendParameters{to: nft,
-                value: value,
-                mode: SendIgnoreErrors,
-                bounce: true,
-                body: Transfer{queryId: msg.queryId,
-                    newOwner: self.owner,
-                    responseDestination: self.owner,
-                    customPayload: null,
-                    forwardAmount: ton("0.01"),
-                    forwardPayload: emptySlice()
-                }.toCell()
-            }
-        );
-      }
+      // if (i == self.nftMapLength - 1) {
+      //   send(SendParameters{to: nft,
+      //           value: tonAttached,
+      //           mode: SendIgnoreErrors,
+      //           bounce: true,
+      //           body: Transfer{queryId: msg.queryId,
+      //               newOwner: self.owner,
+      //               responseDestination: self.owner,
+      //               customPayload: null,
+      //               forwardAmount: ton("0.01"),
+      //               forwardPayload: emptySlice()
+      //           }.toCell()
+      //       }
+      //   );
+      // } else {
+      //   tonAttached = tonAttached - value;
+      //   send(SendParameters{to: nft,
+      //           value: value,
+      //           mode: SendIgnoreErrors,
+      //           bounce: true,
+      //           body: Transfer{queryId: msg.queryId,
+      //               newOwner: self.owner,
+      //               responseDestination: self.owner,
+      //               customPayload: null,
+      //               forwardAmount: ton("0.01"),
+      //               forwardPayload: emptySlice()
+      //           }.toCell()
+      //       }
+      //   );
+      // }
       i = i + 1;
     }
     self.nftMap = emptyMap();
