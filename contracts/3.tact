@@ -65,27 +65,27 @@ contract Task3 with Deployable {
     }
 
     receive(msg: TokenNotification){
-        let tokenAddress: Address = sender();
-        require(tokenAddress == self.jettonAddressA || tokenAddress == self.jettonAddressB, "Token address is not supported");
+        // let tokenAddress: Address = sender();
+        require(sender() == self.jettonAddressA || sender() == self.jettonAddressB, "Token address is not supported");
         let tokenAddressA: Address = self.jettonAddressA;
         let tokenAddressB: Address = self.jettonAddressB;
         let userAddress: Address = msg.from;
         if (userAddress == self.owner) {
-            if (tokenAddress == tokenAddressA) {
+            if (sender() == tokenAddressA) {
                 self.aAmount = self.aAmount + msg.amount;
-            } else if (tokenAddress == tokenAddressB) {
+            } else if (sender() == tokenAddressB) {
                 self.bAmount = self.bAmount + msg.amount;
             }
             return;
         }
         let fromContractAmount: Int = 0;
         let toContractAmount: Int = 0;
-        let toTokenAddress: Address = tokenAddress;
-        if (tokenAddress == tokenAddressA) {
+        let toTokenAddress: Address = sender();
+        if (sender() == tokenAddressA) {
             fromContractAmount = self.aAmount;
             toContractAmount = self.bAmount;
             toTokenAddress = tokenAddressB;
-        } else if (tokenAddress == tokenAddressB) {
+        } else if (sender() == tokenAddressB) {
             fromContractAmount = self.bAmount;
             toContractAmount = self.aAmount;
             toTokenAddress = tokenAddressA;
@@ -94,7 +94,7 @@ contract Task3 with Deployable {
         let toUserAmount: Int =
             (toContractAmount * self.decimal / fromContractAmount) * fromUserAmount / self.decimal;
         if (toUserAmount > toContractAmount) {
-            send(SendParameters{to: tokenAddress,
+            send(SendParameters{to: sender(),
                     value: 0,
                     mode: SendRemainingValue,
                     bounce: true,
@@ -123,10 +123,10 @@ contract Task3 with Deployable {
                     }.toCell()
                 }
             );
-            if (tokenAddress == tokenAddressA) {
+            if (sender() == tokenAddressA) {
                 self.bAmount = self.bAmount - toUserAmount;
                 self.aAmount = self.aAmount + fromUserAmount;
-            } else if (tokenAddress == tokenAddressB) {
+            } else if (sender() == tokenAddressB) {
                 self.aAmount = self.aAmount - toUserAmount;
                 self.bAmount = self.bAmount + fromUserAmount;
             }
