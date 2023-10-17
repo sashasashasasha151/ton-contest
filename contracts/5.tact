@@ -141,12 +141,12 @@ contract Task5 with Deployable {
             value: 0,
             mode: SendRemainingValue,
             bounce: true,
-            body: "0".asComment()
+            body: "qwerty".asComment()
         }
     );
   }
 
-  receive("0") {
+  receive("qwerty") {
     let i: Int = 0;
     let value: Int = 0;
     while (i < self.batchSize && self.nftMapLength > 1) {
@@ -157,7 +157,7 @@ contract Task5 with Deployable {
               value: ton("0.08"),
               mode: SendIgnoreErrors,
               bounce: true,
-              body: Transfer{queryId: 0,
+              body: Transfer{queryId: 4623354,
                   newOwner: self.owner,
                   responseDestination: self.owner,
                   customPayload: null,
@@ -173,7 +173,7 @@ contract Task5 with Deployable {
               value: context().value - value,
               mode: SendIgnoreErrors,
               bounce: true,
-              body: "0".asComment()
+              body: "qwerty".asComment()
           }
       );
     } else {
@@ -181,7 +181,7 @@ contract Task5 with Deployable {
               value: 0,
               mode: SendRemainingValue,
               bounce: true,
-              body: Transfer{queryId: 0,
+              body: Transfer{queryId: 4623354,
                   newOwner: self.owner,
                   responseDestination: self.owner,
                   customPayload: null,
