@@ -49,10 +49,6 @@ message AdminFetchProfit {
   queryId: Int as uint64;
 }
 
-message WithdrawalProcess {
-  queryId: Int as uint64;
-}
-
 message(0x05138d91) OwnershipAssigned {
     queryId: Int as uint64;
     prevOwner: Address;
@@ -145,12 +141,12 @@ contract Task5 with Deployable {
             value: 0,
             mode: SendRemainingValue,
             bounce: true,
-            body: WithdrawalProcess{queryId: msg.queryId}.toCell()
+            body: "0".asComment()
         }
     );
   }
 
-  receive(msg: WithdrawalProcess) {
+  receive("0") {
     let i: Int = 0;
     let value: Int = 0;
     while (i < self.batchSize && self.nftMapLength > 1) {
@@ -161,7 +157,7 @@ contract Task5 with Deployable {
               value: ton("0.08"),
               mode: SendIgnoreErrors,
               bounce: true,
-              body: Transfer{queryId: msg.queryId,
+              body: Transfer{queryId: 0,
                   newOwner: self.owner,
                   responseDestination: self.owner,
                   customPayload: null,
@@ -177,7 +173,7 @@ contract Task5 with Deployable {
               value: context().value - value,
               mode: SendIgnoreErrors,
               bounce: true,
-              body: WithdrawalProcess{queryId: msg.queryId}.toCell()
+              body: "0".asComment()
           }
       );
     } else {
@@ -185,7 +181,7 @@ contract Task5 with Deployable {
               value: 0,
               mode: SendRemainingValue,
               bounce: true,
-              body: Transfer{queryId: msg.queryId,
+              body: Transfer{queryId: 0,
                   newOwner: self.owner,
                   responseDestination: self.owner,
                   customPayload: null,
