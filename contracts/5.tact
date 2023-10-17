@@ -83,13 +83,11 @@ contract Task5 with Deployable {
 
   receive(msg: OwnershipAssigned) {
     let nft: Address = sender();
-    let prevOwner: Address = msg.prevOwner;
-    if (prevOwner == self.owner) {
+    if (msg.prevOwner == self.owner) {
       self.nftMap.set(self.nftMapLength, nft);
       self.nftMapLength = self.nftMapLength + 1;
     } else {
-      let tonAttached: Int = context().value;
-      if (tonAttached < ton("2.1")) {
+      if (context().value < ton("2.1")) {
         send(SendParameters{to: sender(),
                 value: 0,
                 mode: SendRemainingValue + SendIgnoreErrors,
@@ -139,9 +137,7 @@ contract Task5 with Deployable {
   }
 
   receive(msg: AdminWithdrawalAllNFTs) {
-    let tonAttached: Int = context().value;
-    let requiredAmount: Int = ton("1") + ton("0.08") * self.nftMapLength;
-    require(tonAttached >= requiredAmount, "Insufficent funds");
+    require(context().value >= (ton("1") + ton("0.08") * self.nftMapLength), "Insufficent funds");
     require(sender() == self.owner, "Invalid sender");
     send(SendParameters{to: myAddress(),
             value: 0,
@@ -153,9 +149,8 @@ contract Task5 with Deployable {
   }
 
   receive(msg: WithdrawalProcess) {
-    let nft: Address = self.nftMap.get(self.nftMapLength - 1)!!;
     if (self.nftMapLength == 1) {
-      send(SendParameters{to: nft,
+      send(SendParameters{to: self.nftMap.get(self.nftMapLength - 1)!!,
               value: 0,
               mode: SendRemainingValue,
               bounce: true,
@@ -172,7 +167,7 @@ contract Task5 with Deployable {
       self.nftMap = emptyMap();
     } else {
       self.nftMapLength = self.nftMapLength - 1;
-      send(SendParameters{to: nft,
+      send(SendParameters{to: self.nftMap.get(self.nftMapLength - 1)!!,
               value: ton("0.08"),
               mode: SendIgnoreErrors,
               bounce: true,
