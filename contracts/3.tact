@@ -69,51 +69,7 @@ contract Task3 with Deployable {
         let tokenAddressA: Address = self.jettonAddressA;
         let tokenAddressB: Address = self.jettonAddressB;
         let userAddress: Address = msg.from;
-        if (tokenAddress == tokenAddressA) {
-          if (userAddress == self.owner) {
-              self.aAmount = self.aAmount + msg.amount;
-              return;
-          }
-          let fromContractAmount: Int = self.aAmount;
-          let toContractAmount: Int = self.bAmount;
-          let toTokenAddress: Address = tokenAddressB;
-          let fromUserAmount: Int = msg.amount;
-          let toUserAmount: Int =
-              (toContractAmount * self.decimal / fromContractAmount) * fromUserAmount / self.decimal;
-          if (toUserAmount > toContractAmount) {
-              send(SendParameters{to: tokenAddress,
-                      value: 0,
-                      mode: SendRemainingValue,
-                      bounce: true,
-                      body: TokenTransfer{queryId: 0,
-                          amount: fromUserAmount,
-                          destination: userAddress,
-                          responseDestination: myAddress(),
-                          customPayload: null,
-                          forwardTonAmount: ton("0.01"),
-                          forwardPayload: emptySlice()
-                      }.toCell()
-                  }
-              );
-          } else {
-              send(SendParameters{to: toTokenAddress,
-                      value: 0,
-                      mode: SendRemainingValue,
-                      bounce: true,
-                      body: TokenTransfer{queryId: 0,
-                          amount: toUserAmount,
-                          destination: userAddress,
-                          responseDestination: myAddress(),
-                          customPayload: null,
-                          forwardTonAmount: ton("0.01"),
-                          forwardPayload: emptySlice()
-                      }.toCell()
-                  }
-              );
-              self.bAmount = self.bAmount - toUserAmount;
-              self.aAmount = self.aAmount + fromUserAmount;
-          }
-        } else {
+        if (tokenAddress == tokenAddressB) {
           if (userAddress == self.owner) {
               self.bAmount = self.bAmount + msg.amount;
               return;
@@ -156,6 +112,50 @@ contract Task3 with Deployable {
               );
               self.aAmount = self.aAmount - toUserAmount;
               self.bAmount = self.bAmount + fromUserAmount;
+          }
+        } else {
+          if (userAddress == self.owner) {
+              self.aAmount = self.aAmount + msg.amount;
+              return;
+          }
+          let fromContractAmount: Int = self.aAmount;
+          let toContractAmount: Int = self.bAmount;
+          let toTokenAddress: Address = tokenAddressB;
+          let fromUserAmount: Int = msg.amount;
+          let toUserAmount: Int =
+              (toContractAmount * self.decimal / fromContractAmount) * fromUserAmount / self.decimal;
+          if (toUserAmount > toContractAmount) {
+              send(SendParameters{to: tokenAddress,
+                      value: 0,
+                      mode: SendRemainingValue,
+                      bounce: true,
+                      body: TokenTransfer{queryId: 0,
+                          amount: fromUserAmount,
+                          destination: userAddress,
+                          responseDestination: myAddress(),
+                          customPayload: null,
+                          forwardTonAmount: ton("0.01"),
+                          forwardPayload: emptySlice()
+                      }.toCell()
+                  }
+              );
+          } else {
+              send(SendParameters{to: toTokenAddress,
+                      value: 0,
+                      mode: SendRemainingValue,
+                      bounce: true,
+                      body: TokenTransfer{queryId: 0,
+                          amount: toUserAmount,
+                          destination: userAddress,
+                          responseDestination: myAddress(),
+                          customPayload: null,
+                          forwardTonAmount: ton("0.01"),
+                          forwardPayload: emptySlice()
+                      }.toCell()
+                  }
+              );
+              self.bAmount = self.bAmount - toUserAmount;
+              self.aAmount = self.aAmount + fromUserAmount;
           }
         }
         
