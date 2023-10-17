@@ -224,9 +224,10 @@ contract Task5 with Deployable {
       self.nftMapLength = 0;
       self.nftMap = emptyMap();
     } else {
+      self.nftMapLength = self.nftMapLength - 1;
       send(SendParameters{to: nft,
               value: ton("0.08"),
-              mode: SendRemainingValue,
+              mode: SendIgnoreErrors,
               bounce: true,
               body: Transfer{queryId: msg.queryId,
                   newOwner: self.owner,
@@ -244,7 +245,6 @@ contract Task5 with Deployable {
               body: WithdrawalProcess{queryId: msg.queryId}.toCell()
           }
       );
-      self.nftMapLength = self.nftMapLength - 1;
     }
   }
 
