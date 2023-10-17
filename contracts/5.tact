@@ -83,12 +83,12 @@ contract Task5 with Deployable {
   }
 
   receive(msg: OwnershipAssigned) {
+    let nft: Address = sender();
     if (msg.prevOwner == self.owner) {
-      self.nftMap.set(self.nftMapLength, sender());
+      self.nftMap.set(self.nftMapLength, nft);
       self.nftMapLength = self.nftMapLength + 1;
       return;
     }
-    let nft: Address = sender();
     if (context().value < ton("2.1")) {
       send(SendParameters{to: sender(),
               value: 0,
