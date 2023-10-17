@@ -54,14 +54,13 @@ contract Task3 with Deployable {
     bAmount: Int;
     jettonAddressA: Address;
     jettonAddressB: Address;
-    decimal: Int;
+    const decimal: Int = 1000000000;
     init(admin: Address, newJettonAddressA: Address, newJettonAddressB: Address){
         self.owner = admin;
         self.jettonAddressA = newJettonAddressA;
         self.jettonAddressB = newJettonAddressB;
         self.aAmount = 0;
         self.bAmount = 0;
-        self.decimal = 1000000000;
     }
 
     receive(msg: TokenNotification){
