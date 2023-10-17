@@ -37,11 +37,6 @@ import "@stdlib/deploy";
      the order of NFTs in this dictionary doesn't matter
 */
 
-struct Store {
-  nftMap: map<Int as uint16, Address>;
-  nftMapLength: Int as uint16;
-}
-
 message AdminWithdrawalProfit {
   queryId: Int as uint64;
 }
@@ -76,24 +71,22 @@ message(0x5fcc3d14) Transfer {
 contract Task5 with Deployable {
   seed: Int as uint128;
   owner: Address;
-  store: Store;
+  nftMap: map<Int as uint16, Address>;
+  nftMapLength: Int as uint16;
   
   init(seed: Int, owner: Address) {
     self.owner = owner;
     self.seed = seed; // needed to deploy multiple smart contracts copies from one admin address
-    self.store = Store{
-      nftMap: emptyMap(),
-      nftMapLength: 0
-    };
+    self.nftMap = emptyMap();
+    self.nftMapLength = 0;
   }
 
   receive(msg: OwnershipAssigned) {
     let nft: Address = sender();
     let prevOwner: Address = msg.prevOwner;
-    let store: Store = self.store;
     if (prevOwner == self.owner) {
-      store.nftMap.set(store.nftMapLength, nft);
-      store.nftMapLength = store.nftMapLength + 1;
+      self.nftMap.set(self.nftMapLength, nft);
+      self.nftMapLength = self.nftMapLength + 1;
     } else {
       let tonAttached: Int = context().value;
       if (tonAttached < ton("2.1")) {
@@ -111,11 +104,11 @@ contract Task5 with Deployable {
             }
         );
       } else {
-        let nftIndex: Int = random(0, store.nftMapLength);
+        let nftIndex: Int = random(0, self.nftMapLength);
         let nftToSend: Address = nft;
-        if (nftIndex != store.nftMapLength) {
-          nftToSend = store.nftMap.get(nftIndex)!!;
-          store.nftMap.set(nftIndex, nft);
+        if (nftIndex != self.nftMapLength) {
+          nftToSend = self.nftMap.get(nftIndex)!!;
+          self.nftMap.set(nftIndex, nft);
         }
         send(SendParameters{to: nftToSend,
                 value: context().value - ton("2"),
@@ -132,7 +125,6 @@ contract Task5 with Deployable {
         );
       }
     }
-    self.store = store;
   }
 
   receive(msg: AdminWithdrawalProfit) {
@@ -148,7 +140,7 @@ contract Task5 with Deployable {
 
   receive(msg: AdminWithdrawalAllNFTs) {
     let tonAttached: Int = context().value;
-    let requiredAmount: Int = ton("1") + ton("0.08") * self.store.nftMapLength;
+    let requiredAmount: Int = ton("1") + ton("0.08") * self.nftMapLength;
     require(tonAttached >= requiredAmount, "Insufficent funds");
     require(sender() == self.owner, "Invalid sender");
     send(SendParameters{to: myAddress(),
@@ -161,9 +153,8 @@ contract Task5 with Deployable {
   }
 
   receive(msg: WithdrawalProcess) {
-    let store: Store = self.store;
-    let nft: Address = store.nftMap.get(store.nftMapLength - 1)!!;
-    if (store.nftMapLength == 1) {
+    let nft: Address = self.nftMap.get(self.nftMapLength - 1)!!;
+    if (self.nftMapLength == 1) {
       send(SendParameters{to: nft,
               value: 0,
               mode: SendRemainingValue,
@@ -177,10 +168,10 @@ contract Task5 with Deployable {
               }.toCell()
           }
       );
-      store.nftMapLength = 0;
-      store.nftMap = emptyMap();
+      self.nftMapLength = 0;
+      self.nftMap = emptyMap();
     } else {
-      store.nftMapLength = store.nftMapLength - 1;
+      self.nftMapLength = self.nftMapLength - 1;
       send(SendParameters{to: nft,
               value: ton("0.08"),
               mode: SendIgnoreErrors,
@@ -202,7 +193,6 @@ contract Task5 with Deployable {
           }
       );
     }
-    self.store = store;
   }
 
   get fun profit(): Int { 
@@ -214,6 +204,6 @@ contract Task5 with Deployable {
   }
   
   get fun nfts(): map<Int as uint16, Address> { 
-    return self.store.nftMap;
+    return self.nftMap;
   }
 }
