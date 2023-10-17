@@ -182,17 +182,17 @@ contract Task5 with Deployable {
               body: WithdrawalProcess{queryId: msg.queryId}.toCell()
           }
       );
-    } else {
-      send(SendParameters{to: self.nftMap.get(self.nftMapLength - 1)!!,
-              value: 0,
-              mode: SendRemainingValue,
-              bounce: true,
-              body: transfer
-          }
-      );
-      self.nftMapLength = 0;
-      self.nftMap = emptyMap();
+      return;
     }
+    send(SendParameters{to: self.nftMap.get(0)!!,
+            value: 0,
+            mode: SendRemainingValue,
+            bounce: true,
+            body: transfer
+        }
+    );
+    self.nftMapLength = 0;
+    self.nftMap = emptyMap();
   }
 
   get fun profit(): Int { 
