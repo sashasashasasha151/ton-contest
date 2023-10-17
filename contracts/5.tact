@@ -71,9 +71,9 @@ message(0x5fcc3d14) Transfer {
 contract Task5 with Deployable {
   seed: Int as uint128;
   owner: Address;
-  nftMap: map<Int as uint16, Address>;
-  nftMapLength: Int as uint16;
-  const batchSize: Int = 128;
+  nftMap: map<Int as uint8, Address>;
+  nftMapLength: Int as uint8;
+  const batchSize: Int = 112;
   
   init(seed: Int, owner: Address) {
     self.owner = owner;
@@ -150,8 +150,6 @@ contract Task5 with Deployable {
   }
 
   receive(msg: WithdrawalProcess) {
-    // let i: Int = 0;
-    // let value: Int = 0;
     let transfer: Cell = Transfer{queryId: msg.queryId,
                   newOwner: self.owner,
                   responseDestination: self.owner,
@@ -205,7 +203,7 @@ contract Task5 with Deployable {
     return balance - ton("0.1");
   }
   
-  get fun nfts(): map<Int as uint16, Address> { 
+  get fun nfts(): map<Int as uint8, Address> { 
     return self.nftMap;
   }
 }
