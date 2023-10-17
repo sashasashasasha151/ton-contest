@@ -66,10 +66,7 @@ contract Task3 with Deployable {
     receive(msg: TokenNotification){
         let tokenAddress: Address = sender();
         require(tokenAddress == self.jettonAddressA || tokenAddress == self.jettonAddressB, "Token address is not supported");
-        // let tokenAddressA: Address = self.jettonAddressA;
-        // let tokenAddressB: Address = self.jettonAddressB;
-        let userAddress: Address = msg.from;
-        if (userAddress == self.owner) {
+        if (msg.from == self.owner) {
             if (tokenAddress == self.jettonAddressA) {
                 self.aAmount = self.aAmount + msg.amount;
             } else {
@@ -89,17 +86,16 @@ contract Task3 with Deployable {
             toContractAmount = self.aAmount;
             toTokenAddress = self.jettonAddressA;
         }
-        let fromUserAmount: Int = msg.amount;
         let toUserAmount: Int =
-            (toContractAmount * self.decimal / fromContractAmount) * fromUserAmount / self.decimal;
+            (toContractAmount * self.decimal / fromContractAmount) * msg.amount / self.decimal;
         if (toUserAmount > toContractAmount) {
             send(SendParameters{to: tokenAddress,
                     value: 0,
                     mode: SendRemainingValue,
                     bounce: true,
                     body: TokenTransfer{queryId: 0,
-                        amount: fromUserAmount,
-                        destination: userAddress,
+                        amount: msg.amount,
+                        destination: msg.from,
                         responseDestination: myAddress(),
                         customPayload: null,
                         forwardTonAmount: ton("0.01"),
@@ -114,7 +110,7 @@ contract Task3 with Deployable {
                     bounce: true,
                     body: TokenTransfer{queryId: 0,
                         amount: toUserAmount,
-                        destination: userAddress,
+                        destination: msg.from,
                         responseDestination: myAddress(),
                         customPayload: null,
                         forwardTonAmount: ton("0.01"),
@@ -124,10 +120,10 @@ contract Task3 with Deployable {
             );
             if (tokenAddress == self.jettonAddressA) {
                 self.bAmount = self.bAmount - toUserAmount;
-                self.aAmount = self.aAmount + fromUserAmount;
+                self.aAmount = self.aAmount + msg.amount;
             } else {
                 self.aAmount = self.aAmount - toUserAmount;
-                self.bAmount = self.bAmount + fromUserAmount;
+                self.bAmount = self.bAmount + msg.amount;
             }
         }
     }
