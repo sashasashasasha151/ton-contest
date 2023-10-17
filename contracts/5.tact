@@ -73,15 +73,13 @@ contract Task5 with Deployable {
   owner: Address;
   nftMap: map<Int as uint16, Address>;
   nftMapLength: Int as uint16;
-  const batchSize: Int = 64;
-  emptySlice: Slice;
+  const batchSize: Int = 128;
   
   init(seed: Int, owner: Address) {
     self.owner = owner;
     self.seed = seed; // needed to deploy multiple smart contracts copies from one admin address
     self.nftMap = emptyMap();
     self.nftMapLength = 0;
-    self.emptySlice = emptySlice();
   }
 
   receive(msg: OwnershipAssigned) {
@@ -100,7 +98,7 @@ contract Task5 with Deployable {
                     responseDestination: msg.prevOwner,
                     customPayload: null,
                     forwardAmount: 0,
-                    forwardPayload: self.emptySlice
+                    forwardPayload: emptySlice()
                 }.toCell()
             }
         );
@@ -120,7 +118,7 @@ contract Task5 with Deployable {
                     responseDestination: msg.prevOwner,
                     customPayload: null,
                     forwardAmount: 0,
-                    forwardPayload: self.emptySlice
+                    forwardPayload: emptySlice()
                 }.toCell()
             }
         );
@@ -167,7 +165,7 @@ contract Task5 with Deployable {
                   responseDestination: self.owner,
                   customPayload: null,
                   forwardAmount: 0,
-                  forwardPayload: self.emptySlice
+                  forwardPayload: emptySlice()
               }.toCell()
           }
       );
@@ -191,7 +189,7 @@ contract Task5 with Deployable {
                   responseDestination: self.owner,
                   customPayload: null,
                   forwardAmount: 0,
-                  forwardPayload: self.emptySlice
+                  forwardPayload: emptySlice()
               }.toCell()
           }
       );
