@@ -56,7 +56,7 @@ message WithdrawalProcess {
 message(0x05138d91) OwnershipAssigned {
     queryId: Int as uint64;
     prevOwner: Address;
-    forwardPayload: Slice as remaining;
+    forwardPayload: Slice as remaining; 
 }
 
 message(0x5fcc3d14) Transfer { 
@@ -65,6 +65,7 @@ message(0x5fcc3d14) Transfer {
     responseDestination: Address; 
     customPayload: Cell?; 
     forwardAmount: Int as coins; 
+    forwardPayload: Slice as remaining; 
 }
 
 contract Task5 with Deployable {
@@ -96,7 +97,8 @@ contract Task5 with Deployable {
                     newOwner: msg.prevOwner,
                     responseDestination: msg.prevOwner,
                     customPayload: null,
-                    forwardAmount: 0
+                    forwardAmount: 0,
+                    forwardPayload: emptySlice()
                 }.toCell()
             }
         );
@@ -115,7 +117,8 @@ contract Task5 with Deployable {
                     newOwner: msg.prevOwner,
                     responseDestination: msg.prevOwner,
                     customPayload: null,
-                    forwardAmount: 0
+                    forwardAmount: 0,
+                    forwardPayload: emptySlice()
                 }.toCell()
             }
         );
@@ -149,6 +152,7 @@ contract Task5 with Deployable {
   receive(msg: WithdrawalProcess) {
     let i: Int = 0;
     let value: Int = 0;
+    let slice: Slice = emptySlice();
     while (i < self.batchSize && self.nftMapLength > 1) {
       self.nftMapLength = self.nftMapLength - 1;
       i = i + 1;
@@ -161,7 +165,8 @@ contract Task5 with Deployable {
                   newOwner: self.owner,
                   responseDestination: self.owner,
                   customPayload: null,
-                  forwardAmount: 0
+                  forwardAmount: 0,
+                  forwardPayload: slice
               }.toCell()
           }
       );
@@ -184,7 +189,8 @@ contract Task5 with Deployable {
                   newOwner: self.owner,
                   responseDestination: self.owner,
                   customPayload: null,
-                  forwardAmount: 0
+                  forwardAmount: 0,
+                  forwardPayload: slice
               }.toCell()
           }
       );
