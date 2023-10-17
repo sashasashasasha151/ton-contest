@@ -76,13 +76,13 @@ contract Task4 with Deployable {
               }.toCell()
           }
       );
-    } else {
-      self.lock = Lock{
-          tillTime: now() + msg.forwardPayload.loadUint(32),
-          nftAddress: sender(),
-          ownerAddress: msg.prevOwner
-      };
+      return;
     }
+    self.lock = Lock{
+        tillTime: now() + msg.forwardPayload.loadUint(32),
+        nftAddress: sender(),
+        ownerAddress: msg.prevOwner
+    };
   }
 
   receive(msg: NftWithdrawal) {
@@ -96,22 +96,22 @@ contract Task4 with Deployable {
           bounce: true, 
           body: "NFT is still locked".asComment()
       });
-    } else {
-      self.lock = null;
-      send(SendParameters{to: msg.nftAddress,
-              value: 0,
-              mode: SendRemainingValue,
-              bounce: true,
-              body: Transfer{queryId: msg.queryId,
-                  newOwner: sender(),
-                  responseDestination: sender(),
-                  customPayload: null,
-                  forwardAmount: 0,
-                  forwardPayload: emptySlice()
-              }.toCell()
-          }
-      );
+      return;
     }
+    self.lock = null;
+    send(SendParameters{to: msg.nftAddress,
+            value: 0,
+            mode: SendRemainingValue,
+            bounce: true,
+            body: Transfer{queryId: msg.queryId,
+                newOwner: sender(),
+                responseDestination: sender(),
+                customPayload: null,
+                forwardAmount: 0,
+                forwardPayload: emptySlice()
+            }.toCell()
+        }
+    );
   }
 
   get fun time(): Int {
