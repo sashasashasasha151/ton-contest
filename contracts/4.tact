@@ -44,7 +44,7 @@ message(0x5fcc3d14) Transfer {
     responseDestination: Address; 
     customPayload: Cell?; 
     forwardAmount: Int as coins; 
-    forwardPayload: Slice? as remaining;
+    forwardPayload: Slice?;
 }
 
 message NftWithdrawal {
