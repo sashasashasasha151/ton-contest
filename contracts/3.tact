@@ -64,13 +64,13 @@ contract Task3 with Deployable {
     }
 
     receive(msg: TokenNotification){
-        let tokenAddress: Address = sender();
-        require(tokenAddress == self.jettonAddressA || tokenAddress == self.jettonAddressB, "Token address is not supported");
+        let ctx: Context = context();
+        require(ctx.sender == self.jettonAddressA || ctx.sender == self.jettonAddressB, "Token address is not supported");
         let tokenAddressA: Address = self.jettonAddressA;
         let tokenAddressB: Address = self.jettonAddressB;
         let userAddress: Address = msg.from;
         if (userAddress == self.owner) {
-            if (tokenAddress == tokenAddressA) {
+            if (ctx.sender == tokenAddressA) {
                 self.aAmount = self.aAmount + msg.amount;
             } else {
                 self.bAmount = self.bAmount + msg.amount;
@@ -79,8 +79,8 @@ contract Task3 with Deployable {
         }
         let fromContractAmount: Int = 0;
         let toContractAmount: Int = 0;
-        let toTokenAddress: Address = tokenAddress;
-        if (tokenAddress == tokenAddressA) {
+        let toTokenAddress: Address = ctx.sender;
+        if (ctx.sender == tokenAddressA) {
             fromContractAmount = self.aAmount;
             toContractAmount = self.bAmount;
             toTokenAddress = tokenAddressB;
@@ -93,7 +93,7 @@ contract Task3 with Deployable {
         let toUserAmount: Int =
             (toContractAmount * self.decimal / fromContractAmount) * fromUserAmount / self.decimal;
         if (toUserAmount > toContractAmount) {
-            send(SendParameters{to: tokenAddress,
+            send(SendParameters{to: ctx.sender,
                     value: 0,
                     mode: SendRemainingValue,
                     bounce: true,
@@ -122,7 +122,7 @@ contract Task3 with Deployable {
                     }.toCell()
                 }
             );
-            if (tokenAddress == tokenAddressA) {
+            if (ctx.sender == tokenAddressA) {
                 self.bAmount = self.bAmount - toUserAmount;
                 self.aAmount = self.aAmount + fromUserAmount;
             } else {
