@@ -152,7 +152,13 @@ contract Task5 with Deployable {
   receive(msg: WithdrawalProcess) {
     let i: Int = 0;
     let value: Int = 0;
-    let slice: Slice = emptySlice();
+    let transfer: Cell = Transfer{queryId: msg.queryId,
+                  newOwner: self.owner,
+                  responseDestination: self.owner,
+                  customPayload: null,
+                  forwardAmount: 0,
+                  forwardPayload: emptySlice()
+              }.toCell();
     while (i < self.batchSize && self.nftMapLength > 1) {
       self.nftMapLength = self.nftMapLength - 1;
       i = i + 1;
@@ -161,13 +167,7 @@ contract Task5 with Deployable {
               value: ton("0.08"),
               mode: SendIgnoreErrors,
               bounce: true,
-              body: Transfer{queryId: msg.queryId,
-                  newOwner: self.owner,
-                  responseDestination: self.owner,
-                  customPayload: null,
-                  forwardAmount: 0,
-                  forwardPayload: slice
-              }.toCell()
+              body: transfer
           }
       );
     }
@@ -185,13 +185,7 @@ contract Task5 with Deployable {
               value: 0,
               mode: SendRemainingValue,
               bounce: true,
-              body: Transfer{queryId: msg.queryId,
-                  newOwner: self.owner,
-                  responseDestination: self.owner,
-                  customPayload: null,
-                  forwardAmount: 0,
-                  forwardPayload: slice
-              }.toCell()
+              body: transfer
           }
       );
       self.nftMapLength = 0;
