@@ -72,17 +72,15 @@ contract Task3 with Deployable {
               self.aAmount = self.aAmount + msg.amount;
               return;
           }
-          let toContractAmount: Int = self.bAmount;
-          let fromUserAmount: Int = msg.amount;
           let toUserAmount: Int =
-              (toContractAmount * self.decimal / self.aAmount) * fromUserAmount / self.decimal;
-          if (toUserAmount > toContractAmount) {
+              (self.bAmount * self.decimal / self.aAmount) * msg.amount / self.decimal;
+          if (toUserAmount > self.bAmount) {
               send(SendParameters{to: tokenAddress,
                       value: 0,
                       mode: SendRemainingValue,
                       bounce: true,
                       body: TokenTransfer{queryId: 0,
-                          amount: fromUserAmount,
+                          amount: msg.amount,
                           destination: userAddress,
                           responseDestination: myAddress(),
                           customPayload: null,
@@ -107,24 +105,22 @@ contract Task3 with Deployable {
                   }
               );
               self.bAmount = self.bAmount - toUserAmount;
-              self.aAmount = self.aAmount + fromUserAmount;
+              self.aAmount = self.aAmount + msg.amount;
           }
         } else {
           if (userAddress == self.owner) {
               self.bAmount = self.bAmount + msg.amount;
               return;
           }
-          let toContractAmount: Int = self.aAmount;
-          let fromUserAmount: Int = msg.amount;
           let toUserAmount: Int =
-              (toContractAmount * self.decimal / self.bAmount) * fromUserAmount / self.decimal;
-          if (toUserAmount > toContractAmount) {
+              (self.aAmount * self.decimal / self.bAmount) * msg.amount / self.decimal;
+          if (toUserAmount > self.aAmount) {
               send(SendParameters{to: tokenAddress,
                       value: 0,
                       mode: SendRemainingValue,
                       bounce: true,
                       body: TokenTransfer{queryId: 0,
-                          amount: fromUserAmount,
+                          amount: msg.amount,
                           destination: userAddress,
                           responseDestination: myAddress(),
                           customPayload: null,
@@ -149,7 +145,7 @@ contract Task3 with Deployable {
                   }
               );
               self.aAmount = self.aAmount - toUserAmount;
-              self.bAmount = self.bAmount + fromUserAmount;
+              self.bAmount = self.bAmount + msg.amount;
           }
         }
         
