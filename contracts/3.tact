@@ -31,13 +31,6 @@ import "@stdlib/deploy";
   To be exact: any jettons (A or B) received from the admin are "added". Admin can't swap.
 */
 
-struct Info {
-    aAmount: Int;
-    bAmount: Int;
-    jettonAddressA: Address;
-    jettonAddressB: Address;
-}
-
 message(0x7362d09c) TokenNotification {
     queryId: Int as uint64;
     amount: Int as coins;
@@ -57,44 +50,40 @@ message(0xf8a7ea5) TokenTransfer {
 
 contract Task3 with Deployable {
     owner: Address;
-    info: Info;
+    aAmount: Int;
+    bAmount: Int;
+    jettonAddressA: Address;
+    jettonAddressB: Address;
     const decimal: Int = 1000000000;
     init(admin: Address, newJettonAddressA: Address, newJettonAddressB: Address){
         self.owner = admin;
-        self.info = Info{
-            aAmount: 0,
-            bAmount: 0,
-            jettonAddressA: newJettonAddressA,
-            jettonAddressB: newJettonAddressB
-        };
+        self.jettonAddressA = newJettonAddressA;
+        self.jettonAddressB = newJettonAddressB;
+        self.aAmount = 0;
+        self.bAmount = 0;
     }
 
     receive(msg: TokenNotification){
         let tokenAddress: Address = sender();
-        let info: Info = self.info;
-        require(tokenAddress == info.jettonAddressA || tokenAddress == info.jettonAddressB, "Token address is not supported");
-        // let tokenAddressA: Address = self.jettonAddressA;
-        // let tokenAddressB: Address = self.jettonAddressB;
+        require(tokenAddress == self.jettonAddressA || tokenAddress == self.jettonAddressB, "Token address is not supported");
+        let tokenAddressA: Address = self.jettonAddressA;
+        let tokenAddressB: Address = self.jettonAddressB;
         let userAddress: Address = msg.from;
         if (userAddress == self.owner) {
-            if (tokenAddress == info.jettonAddressA) {
-                self.info.aAmount = info.aAmount + msg.amount;
-            } else if (tokenAddress == info.jettonAddressB) {
-                self.info.bAmount = info.bAmount + msg.amount;
+            if (tokenAddress == tokenAddressA) {
+                self.aAmount = self.aAmount + msg.amount;
+                return;
             }
+            self.bAmount = self.bAmount + msg.amount;
             return;
         }
-        let fromContractAmount: Int = 0;
-        let toContractAmount: Int = 0;
-        let toTokenAddress: Address = tokenAddress;
-        if (tokenAddress == info.jettonAddressA) {
-            fromContractAmount = info.aAmount;
-            toContractAmount = info.bAmount;
-            toTokenAddress = info.jettonAddressB;
-        } else if (tokenAddress == info.jettonAddressB) {
-            fromContractAmount = info.bAmount;
-            toContractAmount = info.aAmount;
-            toTokenAddress = info.jettonAddressA;
+        let fromContractAmount: Int = self.bAmount;
+        let toContractAmount: Int = self.aAmount;
+        let toTokenAddress: Address = tokenAddressA;
+        if (tokenAddress == tokenAddressA) {
+            fromContractAmount = self.aAmount;
+            toContractAmount = self.bAmount;
+            toTokenAddress = tokenAddressB;
         }
         let fromUserAmount: Int = msg.amount;
         let toUserAmount: Int =
@@ -129,33 +118,27 @@ contract Task3 with Deployable {
                     }.toCell()
                 }
             );
-            if (tokenAddress == info.jettonAddressA) {
-                self.info.bAmount = info.bAmount - toUserAmount;
-                self.info.aAmount = info.aAmount + fromUserAmount;
-            } else if (tokenAddress == info.jettonAddressB) {
-                self.info.aAmount = info.aAmount - toUserAmount;
-                self.info.bAmount = info.bAmount + fromUserAmount;
+            if (tokenAddress == tokenAddressA) {
+                self.bAmount = self.bAmount - toUserAmount;
+                self.aAmount = self.aAmount + fromUserAmount;
+                return;
             }
+            self.aAmount = self.aAmount - toUserAmount;
+            self.bAmount = self.bAmount + fromUserAmount;
         }
     }
 
     get fun price(jetton: Address): Int {
-        let info: Info = self.info;
-        if (jetton == info.jettonAddressA) {
-            return info.bAmount * self.decimal / info.aAmount;
-        } else if (jetton == info.jettonAddressB) {
-            return info.aAmount * self.decimal / info.bAmount;
+        if (jetton == self.jettonAddressA) {
+            return self.bAmount * self.decimal / self.aAmount;
         }
-        return 0;
+        return self.aAmount * self.decimal / self.bAmount;
     }
 
     get fun balance(jetton: Address): Int {
-        let info: Info = self.info;
-        if (jetton == info.jettonAddressA) {
-            return info.aAmount;
-        } else if (jetton == info.jettonAddressB) {
-            return info.bAmount;
+        if (jetton == self.jettonAddressA) {
+            return self.aAmount;
         }
-        return 0;
+        return self.bAmount;
     }
 }
