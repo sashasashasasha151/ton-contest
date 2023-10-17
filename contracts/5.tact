@@ -49,9 +49,9 @@ message AdminFetchProfit {
   queryId: Int as uint64;
 }
 
-message WithdrawalProcess {
-  queryId: Int as uint64;
-}
+// message WithdrawalProcess {
+//   queryId: Int as uint64;
+// }
 
 message(0x05138d91) OwnershipAssigned {
     queryId: Int as uint64;
@@ -66,6 +66,10 @@ message(0x5fcc3d14) Transfer {
     customPayload: Cell?; 
     forwardAmount: Int as coins; 
     forwardPayload: Slice as remaining; 
+}
+
+message(0xd53276db) Excesses {
+    queryId: Int as uint64;
 }
 
 contract Task5 with Deployable {
@@ -144,13 +148,35 @@ contract Task5 with Deployable {
     let requiredAmount: Int = ton("1") + ton("0.08") * self.nftMapLength;
     require(tonAttached >= requiredAmount, "Insufficent funds");
     require(sender() == self.owner, "Invalid sender");
-    send(SendParameters{to: myAddress(),
-            value: 0,
-            mode: SendRemainingValue,
-            bounce: true,
-            body: WithdrawalProcess{queryId: msg.queryId}.toCell()
-        }
-    );
+    if (self.nftMapLength != 0) {
+      let nft: Address = self.nftMap.get(self.nftMapLength - 1)!!;
+      let responseDestination: Address = myAddress();
+      if (self.nftMapLength == 1) {
+        responseDestination = self.owner;
+      }
+      self.nftMap.set(self.nftMapLength - 1, null);
+      self.nftMapLength = self.nftMapLength - 1;
+      send(SendParameters{to: nft,
+              value: 0,
+              mode: SendRemainingValue,
+              bounce: true,
+              body: Transfer{queryId: msg.queryId,
+                  newOwner: self.owner,
+                  responseDestination: responseDestination,
+                  customPayload: null,
+                  forwardAmount: 0,
+                  forwardPayload: emptySlice()
+              }.toCell()
+          }
+      );
+    }
+    // send(SendParameters{to: myAddress(),
+    //         value: 0,
+    //         mode: SendRemainingValue,
+    //         bounce: true,
+    //         body: WithdrawalProcess{queryId: msg.queryId}.toCell()
+    //     }
+    // );
     // let value: Int = tonAttached * 1000000000 / self.nftMapLength;
     // let i: Int = 0;
     // while(i < self.nftMapLength) {
@@ -205,48 +231,73 @@ contract Task5 with Deployable {
     // self.nftMapLength = 0;
   }
 
-  receive(msg: WithdrawalProcess) {
-    let nft: Address = self.nftMap.get(self.nftMapLength - 1)!!;
-    if (self.nftMapLength == 1) {
+  receive(msg: Excesses) {
+    if (self.nftMapLength != 0) {
+      let nft: Address = self.nftMap.get(self.nftMapLength - 1)!!;
+      let responseDestination: Address = myAddress();
+      if (self.nftMapLength == 1) {
+        responseDestination = self.owner;
+      }
+      self.nftMap.set(self.nftMapLength - 1, null);
+      self.nftMapLength = self.nftMapLength - 1;
       send(SendParameters{to: nft,
               value: 0,
               mode: SendRemainingValue,
               bounce: true,
               body: Transfer{queryId: msg.queryId,
                   newOwner: self.owner,
-                  responseDestination: self.owner,
+                  responseDestination: responseDestination,
                   customPayload: null,
                   forwardAmount: 0,
                   forwardPayload: emptySlice()
               }.toCell()
-          }
-      );
-      self.nftMapLength = 0;
-      self.nftMap = emptyMap();
-    } else {
-      self.nftMapLength = self.nftMapLength - 1;
-      send(SendParameters{to: nft,
-              value: ton("0.08"),
-              mode: SendIgnoreErrors,
-              bounce: true,
-              body: Transfer{queryId: msg.queryId,
-                  newOwner: self.owner,
-                  responseDestination: self.owner,
-                  customPayload: null,
-                  forwardAmount: 0,
-                  forwardPayload: emptySlice()
-              }.toCell()
-          }
-      );
-      send(SendParameters{to: myAddress(),
-              value: context().value - ton("0.08"),
-              mode: SendIgnoreErrors,
-              bounce: true,
-              body: WithdrawalProcess{queryId: msg.queryId}.toCell()
           }
       );
     }
   }
+
+  // receive(msg: WithdrawalProcess) {
+  //   let nft: Address = self.nftMap.get(self.nftMapLength - 1)!!;
+  //   if (self.nftMapLength == 1) {
+  //     send(SendParameters{to: nft,
+  //             value: 0,
+  //             mode: SendRemainingValue,
+  //             bounce: true,
+  //             body: Transfer{queryId: msg.queryId,
+  //                 newOwner: self.owner,
+  //                 responseDestination: self.owner,
+  //                 customPayload: null,
+  //                 forwardAmount: 0,
+  //                 forwardPayload: emptySlice()
+  //             }.toCell()
+  //         }
+  //     );
+  //     self.nftMapLength = 0;
+  //     self.nftMap = emptyMap();
+  //   } else {
+  //     self.nftMapLength = self.nftMapLength - 1;
+  //     send(SendParameters{to: nft,
+  //             value: ton("0.08"),
+  //             mode: SendIgnoreErrors,
+  //             bounce: true,
+  //             body: Transfer{queryId: msg.queryId,
+  //                 newOwner: self.owner,
+  //                 responseDestination: self.owner,
+  //                 customPayload: null,
+  //                 forwardAmount: 0,
+  //                 forwardPayload: emptySlice()
+  //             }.toCell()
+  //         }
+  //     );
+  //     send(SendParameters{to: myAddress(),
+  //             value: context().value - ton("0.08"),
+  //             mode: SendIgnoreErrors,
+  //             bounce: true,
+  //             body: WithdrawalProcess{queryId: msg.queryId}.toCell()
+  //         }
+  //     );
+  //   }
+  // }
 
   get fun profit(): Int { 
     let balance: Int = myBalance();
