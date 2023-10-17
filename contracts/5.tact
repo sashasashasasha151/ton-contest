@@ -73,6 +73,7 @@ contract Task5 with Deployable {
   owner: Address;
   nftMap: map<Int as uint16, Address>;
   nftMapLength: Int as uint16;
+  repeatNumber: Int as uint32;
   const batchSize: Int = 96;
   
   init(seed: Int, owner: Address) {
@@ -80,6 +81,7 @@ contract Task5 with Deployable {
     self.seed = seed; // needed to deploy multiple smart contracts copies from one admin address
     self.nftMap = emptyMap();
     self.nftMapLength = 0;
+    self.repeatNumber = 0;
   }
 
   receive(msg: OwnershipAssigned) {
@@ -159,8 +161,8 @@ contract Task5 with Deployable {
                   forwardAmount: 0,
                   forwardPayload: emptySlice()
               }.toCell();
-    let repeatNumber: Int = min(self.nftMapLength, self.batchSize);
-    repeat(repeatNumber) {
+    self.repeatNumber = min(self.nftMapLength, self.batchSize);
+    repeat(self.repeatNumber) {
       self.nftMapLength = self.nftMapLength - 1;
       // i = i + 1;
       value = value + ton("0.08");
