@@ -49,6 +49,10 @@ message AdminFetchProfit {
   queryId: Int as uint64;
 }
 
+message WithdrawalProcess {
+  queryId: Int as uint64;
+}
+
 message(0x05138d91) OwnershipAssigned {
     queryId: Int as uint64;
     prevOwner: Address;
@@ -69,7 +73,7 @@ contract Task5 with Deployable {
   owner: Address;
   nftMap: map<Int as uint16, Address>;
   nftMapLength: Int as uint16;
-  const batchSize: Int = 32;
+  const batchSize: Int = 64;
   
   init(seed: Int, owner: Address) {
     self.owner = owner;
@@ -123,9 +127,8 @@ contract Task5 with Deployable {
   }
 
   receive(msg: AdminWithdrawalProfit) {
-    let owner: Address = self.owner;
-    require(sender() == owner, "Insufficient privelegies");
-    send(SendParameters{to: owner,
+    require(sender() == self.owner, "Insufficient privelegies");
+    send(SendParameters{to: self.owner,
             value: myBalance() - ton("0.1"),
             mode: SendIgnoreErrors,
             bounce: true,
@@ -141,15 +144,14 @@ contract Task5 with Deployable {
             value: 0,
             mode: SendRemainingValue,
             bounce: true,
-            body: beginCell().storeUint(64, msg.queryId).endCell()
+            body: WithdrawalProcess{queryId: msg.queryId}.toCell()
         }
     );
   }
 
-  receive(msg: Slice) {
+  receive(msg: WithdrawalProcess) {
     let i: Int = 0;
     let value: Int = 0;
-    let queryId: Int = msg.loadUint(64);
     while (i < self.batchSize && self.nftMapLength > 1) {
       self.nftMapLength = self.nftMapLength - 1;
       i = i + 1;
@@ -158,7 +160,7 @@ contract Task5 with Deployable {
               value: ton("0.08"),
               mode: SendIgnoreErrors,
               bounce: true,
-              body: Transfer{queryId: queryId,
+              body: Transfer{queryId: msg.queryId,
                   newOwner: self.owner,
                   responseDestination: self.owner,
                   customPayload: null,
@@ -174,7 +176,7 @@ contract Task5 with Deployable {
               value: context().value - value,
               mode: SendIgnoreErrors,
               bounce: true,
-              body: beginCell().storeUint(64, queryId).endCell()
+              body: WithdrawalProcess{queryId: msg.queryId}.toCell()
           }
       );
     } else {
@@ -182,7 +184,7 @@ contract Task5 with Deployable {
               value: 0,
               mode: SendRemainingValue,
               bounce: true,
-              body: Transfer{queryId: queryId,
+              body: Transfer{queryId: msg.queryId,
                   newOwner: self.owner,
                   responseDestination: self.owner,
                   customPayload: null,
