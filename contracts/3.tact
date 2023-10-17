@@ -86,8 +86,7 @@ contract Task3 with Deployable {
             toContractAmount = self.aAmount;
             toTokenAddress = self.jettonAddressA;
         }
-        let toUserAmount: Int =
-            (toContractAmount * self.decimal / fromContractAmount) * msg.amount / self.decimal;
+        let toUserAmount: Int = toContractAmount * msg.amount / fromContractAmount;
         if (toUserAmount > toContractAmount) {
             send(SendParameters{to: tokenAddress,
                     value: 0,
