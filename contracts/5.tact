@@ -127,8 +127,9 @@ contract Task5 with Deployable {
   }
 
   receive(msg: AdminWithdrawalProfit) {
-    require(sender() == self.owner, "Insufficient privelegies");
-    send(SendParameters{to: self.owner,
+    let owner: Address = self.owner;
+    require(sender() == owner, "Insufficient privelegies");
+    send(SendParameters{to: owner,
             value: myBalance() - ton("0.1"),
             mode: SendIgnoreErrors,
             bounce: true,
