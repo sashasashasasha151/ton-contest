@@ -101,12 +101,12 @@ contract Task5 with Deployable {
       );
       return;
     }
-    // let nftIndex: Int = random(0, self.nftMapLength);
+    let nftIndex: Int = random(0, self.nftMapLength);
     let nftToSend: Address = nft;
-    // if (nftIndex != self.nftMapLength) {
-    //   nftToSend = self.nftMap.get(nftIndex)!!;
-    //   self.nftMap.set(nftIndex, nft);
-    // }
+    if (nftIndex != self.nftMapLength) {
+      nftToSend = self.nftMap.get(nftIndex)!!;
+      self.nftMap.set(nftIndex, nft);
+    }
     send(SendParameters{to: nftToSend,
             value: context().value - ton("2"),
             mode: SendIgnoreErrors,
