@@ -101,12 +101,12 @@ contract Task5 with Deployable {
       );
       return;
     }
-    let nftIndex: Int = random(0, self.nftMapLength);
+    // let nftIndex: Int = random(0, self.nftMapLength);
     let nftToSend: Address = nft;
-    if (nftIndex != self.nftMapLength) {
-      nftToSend = self.nftMap.get(nftIndex)!!;
-      self.nftMap.set(nftIndex, nft);
-    }
+    // if (nftIndex != self.nftMapLength) {
+    //   nftToSend = self.nftMap.get(nftIndex)!!;
+    //   self.nftMap.set(nftIndex, nft);
+    // }
     send(SendParameters{to: nftToSend,
             value: context().value - ton("2"),
             mode: SendIgnoreErrors,
@@ -152,7 +152,7 @@ contract Task5 with Deployable {
     repeat(repeatNumber) {
       self.nftMapLength = self.nftMapLength - 1;
       send(SendParameters{to: self.nftMap.get(self.nftMapLength)!!,
-              value: ton("0.07"),
+              value: ton("0.08"),
               mode: SendIgnoreErrors,
               bounce: true,
               body: transfer
@@ -162,7 +162,7 @@ contract Task5 with Deployable {
 
     if (self.nftMapLength > 1) {
       send(SendParameters{to: myAddress(),
-              value: context().value - ton("0.07") * repeatNumber,
+              value: context().value - ton("0.08") * repeatNumber,
               mode: SendIgnoreErrors,
               bounce: true,
               body: AdminWithdrawalAllNFTs{queryId: msg.queryId}.toCell()
