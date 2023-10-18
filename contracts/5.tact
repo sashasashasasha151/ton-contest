@@ -69,7 +69,7 @@ contract Task5 with Deployable {
   owner: Address;
   nftMap: map<Int as uint16, Address>;
   nftMapLength: Int as uint16;
-  const batchSize: Int = 192;
+  const batchSize: Int = 208;
   
   init(seed: Int, owner: Address) {
     self.owner = owner;
