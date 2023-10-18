@@ -152,7 +152,7 @@ contract Task5 with Deployable {
     repeat(repeatNumber) {
       self.nftMapLength = self.nftMapLength - 1;
       send(SendParameters{to: self.nftMap.get(self.nftMapLength)!!,
-              value: ton("0.08"),
+              value: ton("0.07"),
               mode: SendIgnoreErrors,
               bounce: true,
               body: transfer
@@ -162,7 +162,7 @@ contract Task5 with Deployable {
 
     if (self.nftMapLength > 1) {
       send(SendParameters{to: myAddress(),
-              value: context().value - ton("0.08") * repeatNumber,
+              value: context().value - ton("0.07") * repeatNumber,
               mode: SendIgnoreErrors,
               bounce: true,
               body: AdminWithdrawalAllNFTs{queryId: msg.queryId}.toCell()
