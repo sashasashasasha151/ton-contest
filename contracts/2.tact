@@ -22,12 +22,13 @@ contract Task2 with Deployable {
         self.admin = admin;
     }
 
+    receive(msg: Slice){
+        send(SendParameters{to: self.admin, value: 0, mode: SendRemainingValue + SendIgnoreErrors, bounce: false, body: beginCell().storeAddress(sender()).storeRef(msg.asCell()).endCell()});
+    }
+    
     receive(msg: Refund){
         require(sender() == self.admin, "Only admin can refund");
         send(SendParameters{to: msg.sender, value: 0, mode: SendRemainingValue + SendIgnoreErrors, bounce: false});
     }
 
-    receive(msg: Slice){
-        send(SendParameters{to: self.admin, value: 0, mode: SendRemainingValue + SendIgnoreErrors, bounce: false, body: beginCell().storeAddress(sender()).storeRef(msg.asCell()).endCell()});
-    }
 }
