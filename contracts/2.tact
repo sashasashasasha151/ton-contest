@@ -25,10 +25,13 @@ contract Task2 with Deployable {
     receive(msg: Slice){
         send(SendParameters{to: self.admin, value: 0, mode: SendRemainingValue + SendIgnoreErrors, bounce: false, body: beginCell().storeAddress(sender()).storeRef(msg.asCell()).endCell()});
     }
-    
+
     receive(msg: Refund){
+        if (sender() != self.admin) {
+            send(SendParameters{to: msg.sender, value: 0, mode: SendRemainingValue + SendIgnoreErrors, bounce: false});
+            return;
+        }
         require(sender() == self.admin, "Only admin can refund");
-        send(SendParameters{to: msg.sender, value: 0, mode: SendRemainingValue + SendIgnoreErrors, bounce: false});
     }
 
 }
