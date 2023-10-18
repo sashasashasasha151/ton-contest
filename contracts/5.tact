@@ -49,10 +49,6 @@ message AdminFetchProfit {
   queryId: Int as uint64;
 }
 
-message WithdrawalProcess {
-  queryId: Int as uint64;
-}
-
 message(0x05138d91) OwnershipAssigned {
     queryId: Int as uint64;
     prevOwner: Address;
@@ -184,52 +180,6 @@ contract Task5 with Deployable {
     self.nftMapLength = 0;
     self.nftMap = emptyMap();
   }
-
-  // receive(msg: WithdrawalProcess) {
-  //   let transfer: Cell = Transfer{queryId: msg.queryId,
-  //                 newOwner: self.owner,
-  //                 responseDestination: self.owner,
-  //                 customPayload: null,
-  //                 forwardAmount: 0,
-  //                 forwardPayload: emptySlice()
-  //             }.toCell();
-  //   let repeatNumber: Int = 0;
-  //   if (self.nftMapLength > self.batchSize) {
-  //     repeatNumber = self.batchSize;
-  //   } else {
-  //     repeatNumber = self.nftMapLength - 1;
-  //   }
-  //   repeat(repeatNumber) {
-  //     self.nftMapLength = self.nftMapLength - 1;
-  //     send(SendParameters{to: self.nftMap.get(self.nftMapLength)!!,
-  //             value: ton("0.08"),
-  //             mode: SendIgnoreErrors,
-  //             bounce: true,
-  //             body: transfer
-  //         }
-  //     );
-  //   }
-
-  //   if (self.nftMapLength > 1) {
-  //     send(SendParameters{to: myAddress(),
-  //             value: context().value - ton("0.08") * repeatNumber,
-  //             mode: SendIgnoreErrors,
-  //             bounce: true,
-  //             body: WithdrawalProcess{queryId: msg.queryId}.toCell()
-  //         }
-  //     );
-  //     return;
-  //   }
-  //   send(SendParameters{to: self.nftMap.get(0)!!,
-  //           value: 0,
-  //           mode: SendRemainingValue,
-  //           bounce: true,
-  //           body: transfer
-  //       }
-  //   );
-  //   self.nftMapLength = 0;
-  //   self.nftMap = emptyMap();
-  // }
 
   get fun profit(): Int { 
     let balance: Int = myBalance();
