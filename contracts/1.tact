@@ -21,8 +21,9 @@ contract Task1 with Deployable {
         self.counter = 0;
     }
 
-    receive(msg: Add){
-        self.counter = self.counter + msg.number;
+    receive(msg: Slice){
+        msg.loadUint(64);
+        self.counter = self.counter + msg.loadUint(32);
     }
 
     receive(msg: Subtract){
