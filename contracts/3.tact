@@ -65,36 +65,28 @@ contract Task3 with Deployable {
     receive(msg: TokenNotification){
         let tokenAddress: Address = sender();
         require(tokenAddress == self.jettonAddressA || tokenAddress == self.jettonAddressB, "Token address is not supported");
-        if (msg.from == self.owner) {
-            if (tokenAddress == self.jettonAddressA) {
-                self.aAmount = self.aAmount + msg.amount;
-            } else {
-                self.bAmount = self.bAmount + msg.amount;
-            }
+        if (tokenAddress == self.jettonAddressA) {
+            self.tfa(msg.amount, msg.from);
             return;
         }
-        let fromContractAmount: Int = 0;
-        let toContractAmount: Int = 0;
-        let toTokenAddress: Address = tokenAddress;
-        if (tokenAddress == self.jettonAddressA) {
-            fromContractAmount = self.aAmount;
-            toContractAmount = self.bAmount;
-            toTokenAddress = self.jettonAddressB;
-        } else {
-            fromContractAmount = self.bAmount;
-            toContractAmount = self.aAmount;
-            toTokenAddress = self.jettonAddressA;
+        self.tfb(msg.amount, msg.from);
+    }
+
+    inline fun tfa(amount: Int, from: Address) {
+        if (from == self.owner) {
+            self.aAmount = self.aAmount + amount;
+            return;
         }
         let toUserAmount: Int =
-            (toContractAmount * self.decimal / fromContractAmount) * msg.amount / self.decimal;
-        if (toUserAmount > toContractAmount) {
-            send(SendParameters{to: tokenAddress,
+            (self.bAmount * self.decimal / self.aAmount) * amount / self.decimal;
+        if (toUserAmount > self.bAmount) {
+            send(SendParameters{to: self.jettonAddressA,
                     value: 0,
                     mode: SendRemainingValue,
                     bounce: true,
                     body: TokenTransfer{queryId: 0,
-                        amount: msg.amount,
-                        destination: msg.from,
+                        amount: amount,
+                        destination: from,
                         responseDestination: myAddress(),
                         customPayload: null,
                         forwardTonAmount: ton("0.01")
@@ -102,26 +94,61 @@ contract Task3 with Deployable {
                 }
             );
         } else {
-            send(SendParameters{to: toTokenAddress,
+            send(SendParameters{to: self.jettonAddressB,
                     value: 0,
                     mode: SendRemainingValue,
                     bounce: true,
                     body: TokenTransfer{queryId: 0,
                         amount: toUserAmount,
-                        destination: msg.from,
+                        destination: from,
                         responseDestination: myAddress(),
                         customPayload: null,
                         forwardTonAmount: ton("0.01")
                     }.toCell()
                 }
             );
-            if (tokenAddress == self.jettonAddressA) {
-                self.bAmount = self.bAmount - toUserAmount;
-                self.aAmount = self.aAmount + msg.amount;
-            } else {
-                self.aAmount = self.aAmount - toUserAmount;
-                self.bAmount = self.bAmount + msg.amount;
-            }
+            self.bAmount = self.bAmount - toUserAmount;
+            self.aAmount = self.aAmount + amount;
+        }
+    }
+
+    inline fun tfb(amount: Int, from: Address) {
+        if (from == self.owner) {
+            self.bAmount = self.bAmount + amount;
+            return;
+        }
+        let toUserAmount: Int =
+            (self.aAmount * self.decimal / self.bAmount) * amount / self.decimal;
+        if (toUserAmount > self.aAmount) {
+            send(SendParameters{to: self.jettonAddressB,
+                    value: 0,
+                    mode: SendRemainingValue,
+                    bounce: true,
+                    body: TokenTransfer{queryId: 0,
+                        amount: amount,
+                        destination: from,
+                        responseDestination: myAddress(),
+                        customPayload: null,
+                        forwardTonAmount: ton("0.01")
+                    }.toCell()
+                }
+            );
+        } else {
+            send(SendParameters{to: self.jettonAddressA,
+                    value: 0,
+                    mode: SendRemainingValue,
+                    bounce: true,
+                    body: TokenTransfer{queryId: 0,
+                        amount: toUserAmount,
+                        destination: from,
+                        responseDestination: myAddress(),
+                        customPayload: null,
+                        forwardTonAmount: ton("0.01")
+                    }.toCell()
+                }
+            );
+            self.aAmount = self.aAmount - toUserAmount;
+            self.bAmount = self.bAmount + amount;
         }
     }
 
