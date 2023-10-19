@@ -69,7 +69,6 @@ contract Task5 with Deployable {
   owner: Address;
   nftMap: map<Int as uint16, Address>;
   nftMapLength: Int as uint16;
-  remaining: Int as coins;
   const batchSize: Int = 252;
   
   init(seed: Int, owner: Address) {
@@ -77,7 +76,6 @@ contract Task5 with Deployable {
     self.seed = seed; // needed to deploy multiple smart contracts copies from one admin address
     self.nftMap = emptyMap();
     self.nftMapLength = 0;
-    self.remaining = 0;
   }
 
   receive(msg: OwnershipAssigned) {
@@ -145,98 +143,42 @@ contract Task5 with Deployable {
                   forwardAmount: 0,
                   forwardPayload: emptySlice()
               }.toCell();
-    self.remaining = context().value - ton("0.04") * self.nftMapLength;
-    let repeating: Int = self.nftMapLength - 1;
-    repeat(repeating) {
-      send(SendParameters{to: self.nftMap.get(self.nftMapLength - 1)!!,
+    let repeatNumber: Int = 0;
+    if (self.nftMapLength > self.batchSize) {
+      repeatNumber = self.batchSize;
+    } else {
+      repeatNumber = self.nftMapLength - 1;
+    }
+    repeat(repeatNumber) {
+      self.nftMapLength = self.nftMapLength - 1;
+      send(SendParameters{to: self.nftMap.get(self.nftMapLength)!!,
               value: ton("0.04"),
-              mode: 0,
+              mode: SendIgnoreErrors,
               bounce: true,
               body: transfer
           }
       );
-      self.nftMapLength = self.nftMapLength - 1;
+    }
+
+    if (self.nftMapLength > 1) {
+      send(SendParameters{to: myAddress(),
+              value: context().value - ton("0.04") * repeatNumber,
+              mode: SendIgnoreErrors,
+              bounce: true,
+              body: AdminWithdrawalAllNFTs{queryId: msg.queryId}.toCell()
+          }
+      );
+      return;
     }
     send(SendParameters{to: self.nftMap.get(0)!!,
-            value: self.remaining,
-            mode: SendIgnoreErrors,
+            value: 0,
+            mode: SendRemainingValue,
             bounce: true,
             body: transfer
         }
     );
     self.nftMapLength = 0;
     self.nftMap = emptyMap();
-    self.remaining = 0;
-
-
-    // let repeatNumber: Int = 0;
-    // if (self.nftMapLength > self.batchSize) {
-    //   repeatNumber = self.batchSize;
-    // } else {
-    //   repeatNumber = self.nftMapLength - 1;
-    // }
-    // repeat(repeatNumber) {
-    //   self.nftMapLength = self.nftMapLength - 1;
-    //   send(SendParameters{to: self.nftMap.get(self.nftMapLength)!!,
-    //           value: ton("0.04"),
-    //           mode: SendIgnoreErrors,
-    //           bounce: true,
-    //           body: transfer
-    //       }
-    //   );
-    // }
-
-    // if (self.nftMapLength > 1) {
-    //   send(SendParameters{to: myAddress(),
-    //           value: context().value - ton("0.04") * repeatNumber,
-    //           mode: SendIgnoreErrors,
-    //           bounce: true,
-    //           body: AdminWithdrawalAllNFTs{queryId: msg.queryId}.toCell()
-    //       }
-    //   );
-    //   return;
-    // }
-    // send(SendParameters{to: self.nftMap.get(0)!!,
-    //         value: 0,
-    //         mode: SendRemainingValue,
-    //         bounce: true,
-    //         body: transfer
-    //     }
-    // );
-    // self.nftMapLength = 0;
-    // self.nftMap = emptyMap();
-  }
-
-  bounced(msg: bounced<Transfer>) {
-    let transfer: Cell = Transfer{queryId: msg.queryId,
-                  newOwner: self.owner,
-                  responseDestination: self.owner,
-                  customPayload: null,
-                  forwardAmount: 0,
-                  forwardPayload: emptySlice()
-              }.toCell();
-    self.remaining = context().value - ton("0.04") * self.nftMapLength;
-    let repeating: Int = self.nftMapLength - 1;
-    repeat(repeating) {
-      send(SendParameters{to: self.nftMap.get(self.nftMapLength - 1)!!,
-              value: ton("0.04"),
-              mode: 0,
-              bounce: true,
-              body: transfer
-          }
-      );
-      self.nftMapLength = self.nftMapLength - 1;
-    }
-    send(SendParameters{to: self.nftMap.get(0)!!,
-            value: self.remaining,
-            mode: SendIgnoreErrors,
-            bounce: true,
-            body: transfer
-        }
-    );
-    self.nftMapLength = 0;
-    self.nftMap = emptyMap();
-    self.remaining = 0;
   }
 
   get fun profit(): Int { 

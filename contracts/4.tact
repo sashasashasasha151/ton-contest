@@ -62,8 +62,15 @@ contract Task4 with Deployable {
   }
 
   receive(msg: OwnershipAssigned) {
-    if (self.lock != null) {
-      send(SendParameters{to: sender(),
+    if (self.lock == null) {
+      self.lock = Lock{
+        tillTime: now() + msg.forwardPayload.loadUint(32),
+        nftAddress: sender(),
+        ownerAddress: msg.prevOwner
+      };
+      return;
+    }
+    send(SendParameters{to: sender(),
               value: 0,
               mode: SendRemainingValue,
               bounce: true,
@@ -76,13 +83,6 @@ contract Task4 with Deployable {
               }.toCell()
           }
       );
-      return;
-    }
-    self.lock = Lock{
-        tillTime: now() + msg.forwardPayload.loadUint(32),
-        nftAddress: sender(),
-        ownerAddress: msg.prevOwner
-    };
   }
 
   receive(msg: NftWithdrawal) {
