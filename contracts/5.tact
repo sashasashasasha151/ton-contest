@@ -74,7 +74,7 @@ contract Task5 with Deployable {
   init(seed: Int, owner: Address) {
     self.owner = owner;
     self.seed = seed; // needed to deploy multiple smart contracts copies from one admin address
-    self.nftMap = emptyMap();
+    self.nftMap = null;
     self.nftMapLength = 0;
   }
 
@@ -178,7 +178,7 @@ contract Task5 with Deployable {
         }
     );
     self.nftMapLength = 0;
-    self.nftMap = emptyMap();
+    self.nftMap = null;
   }
 
   get fun profit(): Int { 
