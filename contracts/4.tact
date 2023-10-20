@@ -26,11 +26,11 @@ import "@stdlib/deploy";
    - get the owner of the locked nft (that came from OwnershipAssigned as prevOwner)
 */
 
-// struct Lock {
-//   tillTime: Int as uint32;
-//   nftAddress: Address;
-//   ownerAddress: Address;
-// }
+struct Lock {
+  nftAddress: Address;
+  ownerAddress: Address;
+  tillTime: Int as uint32;
+}
 
 message(0x05138d91) OwnershipAssigned {
     queryId: Int as uint64;
@@ -54,25 +54,19 @@ message NftWithdrawal {
 
 contract Task4 with Deployable {
   seed: Int as uint128;
-  // lock: Lock? = null;
-  tillTime: Int as uint32 = 0;
-  nftAddress: Address?;
-  ownerAddress: Address?;
+  lock: Lock? = null;
   
   init(seed: Int) {
     self.seed = seed; // needed to deploy multiple smart contracts copies from one admin address
   }
 
   receive(msg: OwnershipAssigned) {
-    if (self.ownerAddress == null) {
-      // self.lock = Lock{
-      //   tillTime: now() + msg.forwardPayload.loadUint(32),
-      //   nftAddress: sender(),
-      //   ownerAddress: msg.prevOwner
-      // };
-      self.tillTime = now() + msg.forwardPayload.loadUint(32);
-      self.nftAddress = sender();
-      self.ownerAddress = msg.prevOwner;
+    if (self.lock == null) {
+      self.lock = Lock{
+        nftAddress: sender(),
+        ownerAddress: msg.prevOwner,
+        tillTime: now() + msg.forwardPayload.loadUint(32)
+      };
       return;
     }
     send(SendParameters{to: sender(),
@@ -91,9 +85,9 @@ contract Task4 with Deployable {
   }
 
   receive(msg: NftWithdrawal) {
-    // let locked: Lock = self.lock!!;
-    require(sender() == self.ownerAddress, "Invalid sender");
-    if (now() < self.tillTime) {
+    let locked: Lock = self.lock!!;
+    require(sender() == locked.ownerAddress, "Invalid sender");
+    if (now() < locked.tillTime) {
       send(SendParameters{
           to: sender(),
           value: 0, 
@@ -103,9 +97,7 @@ contract Task4 with Deployable {
       });
       return;
     }
-    self.ownerAddress = null;
-    // self.nftAddress = null;
-    // self.tillTime = 0;
+    self.lock = null;
     send(SendParameters{to: msg.nftAddress,
             value: 0,
             mode: SendRemainingValue,
@@ -122,21 +114,27 @@ contract Task4 with Deployable {
   }
 
   get fun time(): Int {
+    if (self.lock == null) {
+      return 0;
+    }
     let nowTime: Int = now();
-    if (nowTime < self.tillTime) {
-      return self.tillTime - nowTime;
+    if (nowTime < (self.lock!!).tillTime) {
+      return (self.lock!!).tillTime - nowTime;
     }
     return 0;
   }
 
   get fun nft(): Address? {
-    return self.nftAddress;
+    if (self.lock == null) {
+      return null;
+    }
+    return (self.lock!!).nftAddress;
   }
 
   get fun owner(): Address? {
-    if (self.ownerAddress == null) {
+    if (self.lock == null) {
       return null;
     }
-    return self.ownerAddress;
+    return (self.lock!!).ownerAddress;
   }
 }
