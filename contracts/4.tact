@@ -54,11 +54,10 @@ message NftWithdrawal {
 
 contract Task4 with Deployable {
   seed: Int as uint128;
-  lock: Lock?;
+  lock: Lock? = null;
   
   init(seed: Int) {
     self.seed = seed; // needed to deploy multiple smart contracts copies from one admin address
-    self.lock = null;
   }
 
   receive(msg: OwnershipAssigned) {
