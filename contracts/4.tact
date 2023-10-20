@@ -86,10 +86,11 @@ contract Task4 with Deployable {
 
   receive(msg: NftWithdrawal) {
     let locked: Lock = self.lock!!;
-    require(sender() == locked.ownerAddress, "Invalid sender");
+    let sender: Address = sender();
+    require(sender == locked.ownerAddress, "Invalid sender");
     if (now() < locked.tillTime) {
       send(SendParameters{
-          to: sender(),
+          to: sender,
           value: 0, 
           mode: SendRemainingValue, 
           bounce: true, 
@@ -103,8 +104,8 @@ contract Task4 with Deployable {
             mode: SendRemainingValue,
             bounce: true,
             body: Transfer{queryId: msg.queryId,
-                newOwner: sender(),
-                responseDestination: sender(),
+                newOwner: sender,
+                responseDestination: sender,
                 customPayload: null,
                 forwardAmount: 0,
                 forwardPayload: emptySlice()
@@ -115,10 +116,6 @@ contract Task4 with Deployable {
 
   get fun time(): Int {
     if (self.lock == null) {
-      let nowTime: Int = now();
-      if (nowTime < nowTime + 1) {
-        return 0;
-      }
       return 0;
     }
     let nowTime: Int = now();
