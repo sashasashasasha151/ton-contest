@@ -68,20 +68,18 @@ contract Task5 with Deployable {
   seed: Int as uint128;
   owner: Address;
   nftMap: map<Int as uint16, Address>;
-  nftMapLength: Int as uint16;
+  nftMapLength: Int as uint16 = 0;
   const batchSize: Int = 252;
   
   init(seed: Int, owner: Address) {
     self.owner = owner;
     self.seed = seed; // needed to deploy multiple smart contracts copies from one admin address
     self.nftMap = null;
-    self.nftMapLength = 0;
   }
 
   receive(msg: OwnershipAssigned) {
-    let nft: Address = sender();
     if (msg.prevOwner == self.owner) {
-      self.nftMap.set(self.nftMapLength, nft);
+      self.nftMap.set(self.nftMapLength, sender());
       self.nftMapLength = self.nftMapLength + 1;
       return;
     }
@@ -102,10 +100,10 @@ contract Task5 with Deployable {
       return;
     }
     let nftIndex: Int = random(0, self.nftMapLength);
-    let nftToSend: Address = nft;
+    let nftToSend: Address = sender();
     if (nftIndex != self.nftMapLength) {
       nftToSend = self.nftMap.get(nftIndex)!!;
-      self.nftMap.set(nftIndex, nft);
+      self.nftMap.set(nftIndex, sender());
     }
     send(SendParameters{to: nftToSend,
             value: context().value - ton("2"),
