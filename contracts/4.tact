@@ -104,8 +104,8 @@ contract Task4 with Deployable {
       return;
     }
     self.ownerAddress = null;
-    self.nftAddress = null;
-    self.tillTime = 0;
+    // self.nftAddress = null;
+    // self.tillTime = 0;
     send(SendParameters{to: msg.nftAddress,
             value: 0,
             mode: SendRemainingValue,
@@ -134,6 +134,9 @@ contract Task4 with Deployable {
   }
 
   get fun owner(): Address? {
+    if (self.ownerAddress == null) {
+      return null;
+    }
     return self.ownerAddress;
   }
 }
