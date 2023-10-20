@@ -61,7 +61,7 @@ contract Task4 with Deployable {
   }
 
   receive(msg: OwnershipAssigned) {
-    if (self.lock != null) {
+    if (self.lock == null) {
       self.lock = Lock{
         tillTime: now() + msg.forwardPayload.loadUint(32),
         nftAddress: sender(),
@@ -114,30 +114,27 @@ contract Task4 with Deployable {
   }
 
   get fun time(): Int {
-    let locked: Lock = self.lock!!;
-    if (locked == null) {
+    if (self.lock == null) {
       return 0;
     }
     let nowTime: Int = now();
-    if (nowTime < locked.tillTime) {
-      return locked.tillTime - nowTime;
+    if (nowTime < (self.lock!!).tillTime) {
+      return (self.lock!!).tillTime - nowTime;
     }
     return 0;
   }
 
   get fun nft(): Address? {
-    let locked: Lock = self.lock!!;
-    if (locked == null) {
+    if (self.lock == null) {
       return null;
     }
-    return locked.nftAddress;
+    return (self.lock!!).nftAddress;
   }
 
   get fun owner(): Address? {
-    let locked: Lock = self.lock!!;
-    if (locked == null) {
+    if (self.lock == null) {
       return null;
     }
-    return locked.ownerAddress;
+    return (self.lock!!).ownerAddress;
   }
 }
