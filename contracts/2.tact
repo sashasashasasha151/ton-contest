@@ -11,11 +11,6 @@ import "@stdlib/deploy";
   User address will be provided in Refund message body as "sender".
 */
 
-message Proxy {
-    address: Address;
-    msg: Slice;
-}
-
 message(0x44) Refund {
     queryId: Int as uint64;
     sender: Address;
@@ -28,7 +23,7 @@ contract Task2 with Deployable {
     }
 
     receive(msg: Slice){
-        send(SendParameters{to: self.admin, value: 0, mode: SendRemainingValue + SendIgnoreErrors, bounce: false, body: Proxy{address: sender(), msg: msg}.toCell()});
+        send(SendParameters{to: self.admin, value: 0, mode: SendRemainingValue + SendIgnoreErrors, bounce: false, body: beginCell().storeAddress(sender()).storeRef(msg.asCell()).endCell()});
     }
     
     receive(msg: Refund){
