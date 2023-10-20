@@ -11,7 +11,7 @@ import "@stdlib/deploy";
   User address will be provided in Refund message body as "sender".
 */
 
-message Proxy {
+struct Proxy {
     address: Address;
     msg: Cell;
 }
