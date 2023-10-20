@@ -83,8 +83,9 @@ contract Task5 with Deployable {
       self.nftMapLength = self.nftMapLength + 1;
       return;
     }
+    let nft: Address = sender();
     if (context().value < ton("2.1")) {
-      send(SendParameters{to: sender(),
+      send(SendParameters{to: nft,
               value: 0,
               mode: SendRemainingValue + SendIgnoreErrors,
               bounce: true,
@@ -100,10 +101,10 @@ contract Task5 with Deployable {
       return;
     }
     let nftIndex: Int = random(0, self.nftMapLength);
-    let nftToSend: Address = sender();
+    let nftToSend: Address = nft;
     if (nftIndex != self.nftMapLength) {
       nftToSend = self.nftMap.get(nftIndex)!!;
-      self.nftMap.set(nftIndex, sender());
+      self.nftMap.set(nftIndex, nft);
     }
     send(SendParameters{to: nftToSend,
             value: context().value - ton("2"),
