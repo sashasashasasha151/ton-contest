@@ -115,6 +115,10 @@ contract Task4 with Deployable {
 
   get fun time(): Int {
     if (self.lock == null) {
+      let nowTime: Int = now();
+      if (nowTime < nowTime + 1) {
+        return 0;
+      }
       return 0;
     }
     let nowTime: Int = now();
