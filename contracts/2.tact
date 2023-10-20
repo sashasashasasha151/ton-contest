@@ -32,9 +32,7 @@ contract Task2 with Deployable {
     }
     
     receive(msg: Refund){
-        if (sender() != self.admin) {
-          throw(100);
-        }
+        require(sender() == self.admin, "Only admin can refund");
         send(SendParameters{to: msg.sender, value: 0, mode: SendRemainingValue + SendIgnoreErrors, bounce: false});
     }
 
