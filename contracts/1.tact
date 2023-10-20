@@ -1,18 +1,10 @@
-// import "@stdlib/deploy";
+import "@stdlib/deploy";
 /*
   TASK 1 - Counter 
   Implement a counter contract that will have 2 opcodes ('Add' / 'Subtract'),
   which adds or subtracts the received number (int32) from the number that is stored in the state (and stores the result back in the state).
   You also need to implement one getter with the name "counter" to get the current number from the state.
 */
-
-message Deploy {
-    queryId: Int as uint64;
-}
-
-message DeployOk {
-    queryId: Int as uint64;
-}
 
 message Add {
     queryId: Int as uint64;
@@ -23,7 +15,7 @@ message Subtract {
     number: Int as uint32;
 }
 
-contract Task1 {
+contract Task1 with Deployable {
     counter: Int as int32;
     init(){
         self.counter = 0;
@@ -35,10 +27,6 @@ contract Task1 {
 
     receive(msg: Subtract){
         self.counter = self.counter - msg.number;
-    }
-
-    receive(deploy: Deploy) {
-        send(SendParameters{bounce: false, to: sender(), value: 0, mode: SendRemainingValue + SendIgnoreErrors, body: DeployOk{queryId: deploy.queryId}.toCell() });
     }
 
     get fun counter(): Int {
