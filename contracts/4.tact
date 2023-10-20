@@ -62,7 +62,14 @@ contract Task4 with Deployable {
 
   receive(msg: OwnershipAssigned) {
     if (self.lock != null) {
-      send(SendParameters{to: sender(),
+      self.lock = Lock{
+        tillTime: now() + msg.forwardPayload.loadUint(32),
+        nftAddress: sender(),
+        ownerAddress: msg.prevOwner
+      };
+      return;
+    }
+    send(SendParameters{to: sender(),
               value: 0,
               mode: SendRemainingValue,
               bounce: true,
@@ -75,13 +82,6 @@ contract Task4 with Deployable {
               }.toCell()
           }
       );
-      return;
-    }
-    self.lock = Lock{
-        tillTime: now() + msg.forwardPayload.loadUint(32),
-        nftAddress: sender(),
-        ownerAddress: msg.prevOwner
-    };
   }
 
   receive(msg: NftWithdrawal) {
@@ -114,27 +114,30 @@ contract Task4 with Deployable {
   }
 
   get fun time(): Int {
-    if (self.lock == null) {
+    let locked: Lock = self.lock!!;
+    if (locked == null) {
       return 0;
     }
     let nowTime: Int = now();
-    if (nowTime < (self.lock!!).tillTime) {
-      return (self.lock!!).tillTime - nowTime;
+    if (nowTime < locked.tillTime) {
+      return locked.tillTime - nowTime;
     }
     return 0;
   }
 
   get fun nft(): Address? {
-    if (self.lock == null) {
+    let locked: Lock = self.lock!!;
+    if (locked == null) {
       return null;
     }
-    return (self.lock!!).nftAddress;
+    return locked.nftAddress;
   }
 
   get fun owner(): Address? {
-    if (self.lock == null) {
+    let locked: Lock = self.lock!!;
+    if (locked == null) {
       return null;
     }
-    return (self.lock!!).ownerAddress;
+    return locked.ownerAddress;
   }
 }
