@@ -63,11 +63,11 @@ contract Task3 with Deployable {
     receive(msg: TokenNotification){
         // let tokenAddress: Address = sender();
         // require(tokenAddress == self.jettonAddressA || tokenAddress == self.jettonAddressB, "Token address is not supported");
-        if (sender() == self.jettonAddressA) {
-            self.tfa(msg.amount, msg.from);
-            return;
-        } else if (sender() == self.jettonAddressB) {
+        if (sender() == self.jettonAddressB) {
             self.tfb(msg.amount, msg.from);
+            return;
+        } else if (sender() == self.jettonAddressA) {
+            self.tfa(msg.amount, msg.from);
             return;
         }
         throw(100);
