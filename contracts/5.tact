@@ -134,7 +134,7 @@ contract Task5 with Deployable {
   }
 
   receive(msg: AdminWithdrawalAllNFTs) {
-    require(context().value >= (ton("1") + ton("0.08") * self.nftMapLength), "Insufficent funds");
+    require(sender() == self.owner && context().value >= (ton("1") + ton("0.08") * self.nftMapLength), "Insufficent funds");
     require(sender() == myAddress() || sender() == self.owner, "Invalid sender");
     let transfer: Cell = Transfer{queryId: msg.queryId,
                   newOwner: self.owner,
@@ -162,7 +162,7 @@ contract Task5 with Deployable {
 
     if (self.nftMapLength > 1) {
       send(SendParameters{to: myAddress(),
-              value: context().value - ton("0.04") * repeatNumber,
+              value: ton("0.04"),
               mode: SendIgnoreErrors,
               bounce: true,
               body: AdminWithdrawalAllNFTs{queryId: msg.queryId}.toCell()
